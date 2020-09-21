@@ -119,31 +119,12 @@ class App extends React.Component {
     this.setState({ openKeys });
   };
 
-  getMenu = () => {
-    if (store.get(role) == '1') {
-      if (store.get(shopType) == '1') {
-        this.setState({ menu: 'food' });
-      } else if (store.get(shopType) == '2') {
-        this.setState({ menu: 'retail' });
-      }
-    } else {
-      if (store.get(shopType) == '2') {
-        this.setState({ menu: 'retailStaff' });
-      }
-    }
-  };
-
   componentDidMount() {
-    const { menu } = this.state;
-    if (
-      menu &&
-      defaultMenu[menu].filter(({ children }) => children.some(({ src }) => this.props.location.pathname == src)).length > 0
-    ) {
+
+    if (defaultMenu.filter(({ children }) => children.some(({ src }) => this.props.location.pathname == src)).length > 0) {
       this.setState({
         openKeys: [
-          defaultMenu[menu]
-            .filter((item) => item.children.some(({ src }) => this.props.location.pathname == src))[0]
-            .key.toString(),
+          defaultMenu.filter((item) => item.children.some(({ src }) => this.props.location.pathname == src))[0].key.toString(),
         ],
       });
     } else {

@@ -1,0 +1,38 @@
+// 公共配置
+@highlight: #f60;
+@info-red: #fc5050;
+@info-green: #31c105;
+@text-gray: #999;
+@text-darkgray: #666;
+@text-primary: #006acc;
+
+:global(.title) {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  color: rgba(0, 0, 0, 0.85);
+  font-weight: bold;
+  font-size: 16px;
+  border-bottom: 1px solid #e8e8e8;
+  padding: 5px 0;
+  > span {
+    height: auto;
+    line-height: 1.5;
+    border-left: 3px solid #1d9fb1;
+    padding-left: 10px;
+  }
+}
+:global(.textEdit) {
+  color: @text-primary;
+}
+:global(.textDelete) {
+  color: @info-red;
+}
+
+:global(.textSuccess) {
+  color: @info-green;
+}
+:global(.textHighLight) {
+  color: @highlight;
+}

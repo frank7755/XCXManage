@@ -1,0 +1,93 @@
+@import (reference) "~antd/es/button/style/index.less";
+
+.ant-menu-dark,
+.ant-menu-dark .ant-menu-sub {
+  background: #28303e;
+}
+.ant-layout-sider {
+  background: #28303e;
+}
+
+.ant-menu-dark .ant-menu-inline.ant-menu-sub {
+  background: #263144;
+}
+
+.ant-btn {
+  text-shadow: none !important;
+  box-shadow: none !important;
+  transition: margin 0s !important;
+  &-assist {
+    .button-variant-primary(#fff; #666);
+  }
+
+  &-assist&-clicked:after {
+    border-color: #666;
+  }
+
+  &-edit {
+    .button-variant-primary(#fff; #2b89df);
+  }
+  &-edit&-clicked:after {
+    border-color: #2b89df;
+  }
+
+  &-success {
+    .button-variant-primary(#fff; #45d764);
+  }
+  &-success&-clicked:after {
+    border-color: #45d764;
+  }
+
+  &-warning {
+    .button-variant-primary(#fff; #e8e10e);
+  }
+  &-warning&-clicked:after {
+    border-color: #e8e10e;
+  }
+
+  &-danger {
+    .button-variant-primary(#fff; #fc5050);
+  }
+  &-danger&-clicked:after {
+    border-color: #fc5050;
+  }
+
+  &-blue {
+    .button-variant-other(#006acc;#fff; #006acc);
+  }
+  &-blue&-clicked:after {
+    border-color: #006acc;
+  }
+
+  &-gray {
+    .button-variant-other(#666;#fff;#999);
+  }
+  &-gray&-clicked:after {
+    border-color: #999;
+  }
+
+  &-red {
+    .button-variant-other(#d63232;#fff;#d63232);
+    &:hover,
+    &:focus {
+      .button-color(#ee5757;#fff;#ee5757);
+    }
+  }
+  &-red&-clicked:after {
+    border-color: #d63232;
+  }
+
+  &-orange {
+    .button-variant-other(#dc4e16;#fff;#dc4e16);
+  }
+  &-orange&-clicked:after {
+    border-color: #dc4e16;
+  }
+
+  &-green {
+    .button-variant-other(#59ac30;#fff;#59ac30);
+  }
+  &-green&-clicked:after {
+    border-color: #59ac30;
+  }
+}

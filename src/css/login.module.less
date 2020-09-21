@@ -1,0 +1,96 @@
+.body {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: url("~images/background/2.jpg") no-repeat center/cover;
+}
+.loginFormBox {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  margin: 0 auto;
+  padding: 30px 60px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  .logo {
+    display: block;
+    width: 200px;
+    margin: 0 auto 20px;
+  }
+}
+.registerFormBox {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  margin: 0 auto;
+  padding: 30px 60px;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  .captchaBox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+    .captchaInput {
+      flex: 1;
+      margin-right: 10px;
+    }
+  }
+  .message {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+    .captchaInput {
+      flex: 1;
+      margin-right: 10px;
+    }
+  }
+  .registerButton {
+    width: 100%;
+  }
+  .loginHref {
+    display: inline-block;
+    line-height: 32px;
+    margin-top: 10px;
+  }
+  .captchaImg {
+    border-radius: 3px;
+  }
+  .imgPlaceHolder {
+    display: inline-block;
+    width: 120px;
+    height: 32px;
+    border-radius: 3px;
+    background: #fff;
+  }
+}
+.loginForgot {
+  float: right;
+}
+.loginButton {
+  width: 100%;
+}
+.loginForm {
+  :global(.ant-form-item) {
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+.bottomIcp {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  text-align: center;
+  color: #e8e8e8;
+  width: 100%;
+}
