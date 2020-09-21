@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "alwaysStrict": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "~js/*": ["Assets/src/js/*"],
+      "~css/*": ["Assets/src/css/*"],
+      "~fonts/*": ["Assets/src/fonts/*"],
+      "~images/*": ["Assets/src/images/*"]
+    }
+  },
+  "exclude": ["node_modules"],
+  "include": ["Assets/src/**/*"]
+}

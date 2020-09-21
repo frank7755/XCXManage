@@ -1,0 +1,65 @@
+.formDrawer {
+  :global(.ant-drawer-wrapper-body) {
+    overflow: hidden !important;
+
+    :global(.ant-drawer-body) {
+      overflow: auto;
+      height: calc(100% - 108px);
+
+      .form {
+        height: 100%;
+
+        .spinning {
+          :global(.ant-spin-container) {
+            height: 100%;
+
+            .body {
+              height: 100%;
+              position: relative;
+
+              section {
+                width: 50%;
+                padding-right: 12px;
+                vertical-align: top;
+                display: inline-block;
+
+                &:nth-of-type(2n) {
+                  padding-right: 0;
+                  padding-left: 12px;
+                }
+              }
+
+              :global(.ui-h2-title) {
+                font-size: 14px;
+                font-weight: bold;
+              }
+            }
+          }
+        }
+      }
+
+      .footer {
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        text-align: right;
+        position: absolute;
+        padding: 10px 24px;
+        background: #fff;
+        border-top: 1px solid #e8e8e8;
+
+        button + button {
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .formDrawer {
+    :global(.ant-drawer-content-wrapper) {
+      width: 100% !important;
+    }
+  }
+}
