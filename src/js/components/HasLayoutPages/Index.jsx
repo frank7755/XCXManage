@@ -144,7 +144,6 @@ class App extends React.Component {
   };
 
   componentWillMount() {
-    this.getMenu();
     setTimeout(
       () =>
         request('/api/login_check', {
@@ -230,7 +229,7 @@ class App extends React.Component {
             defaultOpenKeys={this.state.openKeys}
             selectedKeys={[`${path}`]}
           >
-            {defaultMenu[menu].map((nav) => (
+            {defaultMenu.map((nav) => (
               <SubMenu
                 key={nav.key}
                 title={
@@ -254,13 +253,6 @@ class App extends React.Component {
           <Header className={styles.header}>
             <h2>
               {store.get(shopName)}
-              {store.get(role) == '1' ? (
-                <Button type="ghost" icon="sync" style={{ marginLeft: 15 }} onClick={this.handleSwap}>
-                  切换店铺
-                </Button>
-              ) : (
-                ''
-              )}
             </h2>
             <ul>
               <Dropdown overlay={wechatOverLay} placement="bottomRight">

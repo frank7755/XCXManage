@@ -258,11 +258,7 @@ export default class App extends React.Component {
             store.set(role, payload.user_role);
             store.set(shopType, payload.shop_type);
 
-            if (payload.user_role == '1') {
-              history.push('/shop');
-            } else {
-              history.push('/cashcenter');
-            }
+            history.push('/');
           })
           .catch((error) => message.error(error.message));
       }
