@@ -1,0 +1,30 @@
+@import "../common.less";
+.businessInfo {
+  background-color: #fff;
+  padding: 24px 32px;
+  .businessInfoDetails {
+    padding: 24px 32px;
+  }
+  h3 {
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .imgBox {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    width: 120px;
+    height: 120px;
+    padding: 10px;
+    border: 1px solid #999;
+    border-radius: 5px;
+    img {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      max-height: calc(100% - 20px);
+      max-width: calc(100% - 20px);
+      transform: translate(-50%, -50%);
+    }
+  }
+}

@@ -19,21 +19,6 @@ class RegisterForm extends React.Component {
     checkedName: '',
   };
 
-  componentDidMount() {
-    this.handleCaptcha();
-    request('api/kdt_select').then((payload) =>
-      this.setState({
-        shopOptions: payload.pageData,
-      })
-    );
-  }
-
-  handleCaptcha = () => {
-    request('/api/testGetCaptcha')
-      .then((payload) => this.setState({ url: payload.url }))
-      .catch((error) => message.error(error.message));
-  };
-
   handleSubmit = (e) => {
     e.preventDefault();
 
@@ -145,17 +130,14 @@ class RegisterForm extends React.Component {
             </div>
           </Form.Item>
           <Form.Item>
-            {getFieldDecorator('yz_shop_id', {
-              rules: [{ required: true, message: '请输入密码' }],
+            {getFieldDecorator('shop_name', {
+              rules: [{ required: true, message: '请输入店铺名称' }],
             })(
-              <Select placeholder="请选择商城" onChange={this.handleChange}>
-                {shopOptions &&
-                  shopOptions.map((item) => (
-                    <Option key={item.kdt_id} dataref={item} value={item.kdt_id}>
-                      {item.kdt_name}
-                    </Option>
-                  ))}
-              </Select>
+              <Input
+                prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                type="text"
+                placeholder="请输入店铺名称"
+              />
             )}
           </Form.Item>
           {/* <Form.Item>

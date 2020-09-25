@@ -1,0 +1,46 @@
+@import "../common.less";
+body {
+  width: 100%;
+  overflow: auto;
+}
+.shop {
+  .top {
+    border-bottom: 1px solid #e8e8e8;
+    padding: 12px 0;
+    .topimg {
+      display: block;
+      width: 1200px;
+      margin: 0 auto;
+      img {
+        width: 160px;
+      }
+    }
+  }
+  .shopinfo {
+    display: block;
+    width: 1200px;
+    margin: 0 auto;
+    padding: 24px 32px;
+    background-color: #f8f8f8;
+    .shopCard {
+      margin-bottom: 24px;
+      &.active {
+        box-shadow: 0 5px 10px 2px rgba(60, 178, 189, 0.5);
+      }
+      :global(.ant-card-body) {
+        > p {
+          margin-bottom: 10px;
+          > span {
+            font-weight: bold;
+          }
+        }
+        > div {
+          display: inline-block;
+          a {
+            margin-right: 10px;
+          }
+        }
+      }
+    }
+  }
+}

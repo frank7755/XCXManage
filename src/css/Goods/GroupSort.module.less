@@ -1,0 +1,18 @@
+@import "../common.less";
+
+.groupSort {
+  padding: 24px;
+  background-color: #fff;
+  .dragTable {
+    :global(.drop-over-upward) {
+      td {
+        border-top: 2px dashed @text-primary;
+      }
+    }
+    :global(.drop-over-downward) {
+      td {
+        border-bottom: 2px dashed @text-primary;
+      }
+    }
+  }
+}

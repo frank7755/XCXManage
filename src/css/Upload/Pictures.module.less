@@ -1,0 +1,93 @@
+.pictures {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  padding-bottom: 24px;
+  .groupLeft {
+    width: 200px;
+    height: 600px;
+    border: 1px solid #e7e7e7;
+    margin-right: 16px;
+    overflow: auto;
+    position: sticky;
+    ul {
+      margin: 0;
+      padding: 24px 0;
+      li {
+        padding: 0 10px;
+        margin: 5px 0;
+        line-height: 32px;
+        cursor: pointer;
+        > div {
+          display: flex;
+          justify-content: space-between;
+          color: #333;
+          font-size: 16px;
+          align-items: center;
+          &:hover {
+            > p {
+              display: block;
+            }
+          }
+          p {
+            display: none;
+            font-size: 14px;
+            margin: 0;
+          }
+        }
+        &.active {
+          background: #e7e7e7;
+        }
+        &:last-child {
+          button {
+            width: 100%;
+            margin: 12px auto;
+          }
+        }
+      }
+    }
+  }
+  .groupRight {
+    flex: 1;
+    > h2 {
+      margin: 0;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #e7e7e7;
+      > span {
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 16px;
+        margin-right: 24px;
+      }
+    }
+    .imgCheckBox {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      padding-right: 24px;
+      margin-right: -24px;
+      > li {
+        margin-right: 24px;
+        width: 200px;
+        margin-bottom: 12px;
+        img {
+          display: block;
+          width: 100%;
+          height: 200px;
+          border: 1px solid #eee;
+        }
+        .checkName {
+          display: block;
+          margin: 5px 0;
+          &::before {
+            margin: 0;
+          }
+        }
+      }
+    }
+    .actionBottom {
+      text-align: right;
+    }
+  }
+}

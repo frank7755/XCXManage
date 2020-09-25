@@ -1,0 +1,62 @@
+@import "../../../css/common.less";
+
+.ruleSet {
+  padding: 24px 32px;
+  background-color: #fff;
+  .addRuleName {
+    label {
+      display: inline-block;
+      width: 80px;
+    }
+  }
+}
+.addRule {
+  display: block;
+  white-space: nowrap;
+  margin-bottom: 16px;
+  label {
+    display: inline-block;
+    width: 80px;
+  }
+  .mapName {
+    display: inline-block;
+    white-space: normal;
+    vertical-align: top;
+    > span {
+      display: inline-block;
+      padding-bottom: 16px;
+      &:first-child {
+        margin-right: 10px;
+      }
+    }
+  }
+}
+.ruleBox {
+  > a {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 5px;
+  }
+  .ruleSetBox {
+    display: inline-block;
+    vertical-align: top;
+    width: 60%;
+    min-width: 600px;
+    max-width: 1000px;
+  }
+}
+.action {
+  width: 60%;
+  min-width: 600px;
+  max-width: 1000px;
+}
+.actionTable {
+  padding: 24px 32px;
+}
+.editTableCell {
+  &:hover {
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    padding: 0 12px;
+  }
+}

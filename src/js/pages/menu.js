@@ -5,24 +5,19 @@ export default [
     children: [
       {
         key: 801,
-        title: '菜品下单',
-        src: '/foodscash',
+        title: '收银中心',
+        src: '/cashcenter',
       },
       {
         key: 802,
         title: '销售查询',
-        src: '/foodssell',
+        src: '/sellsearch',
       },
       {
         key: 803,
         title: '线上订单查询',
         src: '/onlineorder',
-      },
-      {
-        key: 804,
-        title: '核验电子券',
-        src: '/confirmticket',
-      },
+      }
     ],
   },
   {
@@ -36,8 +31,8 @@ export default [
       },
       {
         key: 403,
-        title: '菜品添加',
-        src: '/foodsadd',
+        title: '商品添加',
+        src: '/goodsadd',
       },
     ],
   },
@@ -91,12 +86,7 @@ export default [
         key: 102,
         title: '店员管理',
         src: '/staffmanage',
-      },
-      {
-        key: 103,
-        title: '绑定银行卡',
-        src: '/bindbank',
-      },
+      }
     ],
   },
   {
@@ -107,22 +97,6 @@ export default [
         key: 201,
         title: '素材中心',
         src: '/sourcecenter',
-      },
-    ],
-  },
-  {
-    key: 9,
-    title: '资产',
-    children: [
-      {
-        key: 901,
-        title: '资产明细',
-        src: '/propertydetails',
-      },
-      {
-        key: 902,
-        title: '提现记录',
-        src: '/withdrawrecord',
       },
     ],
   },

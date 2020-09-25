@@ -1,0 +1,94 @@
+@import "../common.less";
+.onlineTable {
+  padding: 24px 32px;
+  background-color: #fff;
+  .rowItem {
+    label {
+      width: 80px;
+      display: inline-block;
+      vertical-align: middle;
+      text-align: left;
+    }
+    button {
+      margin-right: 10px;
+    }
+  }
+  .listHeader {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    flex-wrap: nowrap;
+    background: #f2f2f2;
+    li {
+      width: 10%;
+      padding: 10px;
+      text-align: right;
+      &:first-child {
+        width: 40%;
+        text-align: left;
+      }
+    }
+  }
+  .listItem {
+    margin-bottom: 24px;
+    .listItemTitle {
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #f2f2f2;
+    }
+  }
+}
+.sendGoodsModal {
+  .tableTitle {
+    padding: 20px 0 10px;
+  }
+  .warningText {
+    p {
+      margin-bottom: 10px;
+      &:last-child {
+        margin: 0;
+      }
+    }
+  }
+  .sendChoose {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24px;
+    > span {
+      width: 80px;
+      text-align: right;
+    }
+    > div {
+      margin-left: 20px;
+      flex: 1;
+    }
+  }
+  .customerInfo {
+    display: flex;
+    align-items: flex-start;
+    padding-top: 24px;
+    > span {
+      width: 80px;
+      line-height: 39px;
+      text-align: right;
+    }
+    > section {
+      flex: 1;
+      margin-left: 20px;
+      margin-right: 80px;
+      > p {
+        margin-bottom: 10px;
+      }
+    }
+  }
+  :global(.ant-modal-body) {
+    max-height: 700px;
+    overflow: auto;
+  }
+}
+.pagination {
+  text-align: right;
+}

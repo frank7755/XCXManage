@@ -1,0 +1,128 @@
+@import "../common.less";
+.cashCenter {
+  background-color: #fff;
+  padding: 24px;
+  :global(.title) {
+    margin-bottom: 0;
+  }
+  .total {
+    padding-top: 10px;
+    padding-bottom: 24px;
+    > div {
+      float: left;
+      width: 33%;
+      &:nth-child(1) {
+        span {
+          color: @text-primary;
+          font-size: 24px;
+        }
+      }
+      &:nth-child(2) {
+        span {
+          font-size: 24px;
+          color: @info-green;
+        }
+      }
+      &:nth-child(3) {
+        span {
+          font-size: 24px;
+          color: @info-red;
+        }
+      }
+    }
+  }
+  .actions {
+    padding-bottom: 24px;
+    button {
+      margin-right: 10px;
+    }
+  }
+  :global(.ant-form-item-control) {
+    line-height: 1;
+  }
+  :global(.ant-table-tbody) {
+    > tr {
+      > td {
+        line-height: 32px;
+      }
+    }
+  }
+}
+.hangUpOrder {
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    li {
+      width: 25%;
+      padding-bottom: 24px;
+      &:hover,
+      &.checked {
+        > div {
+          border-color: @text-primary;
+          box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+        }
+      }
+      > div {
+        cursor: pointer;
+        position: relative;
+        height: 200px;
+        margin: 0 12px;
+        border: 1px solid #eee;
+        border-radius: 3px;
+        > i {
+          position: absolute;
+          left: 12px;
+          top: 12px;
+        }
+        > div {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          max-height: 160px;
+          overflow: auto;
+          p {
+            margin-bottom: 5px;
+            &:only-child {
+              margin: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+  :global(.ant-modal-content) {
+    height: 100%;
+    :global(.ant-modal-body) {
+      height: calc(100% - 108px);
+      overflow: auto;
+    }
+  }
+}
+
+.goodsDetails,
+.goodsTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  > span {
+    &:nth-child(1) {
+      width: 25%;
+    }
+    &:nth-child(2) {
+      width: 40%;
+    }
+    &:nth-child(3) {
+      width: 20%;
+    }
+    &:nth-child(4) {
+      width: 15%;
+    }
+  }
+}
+.goodsTitle {
+  font-weight: bold;
+}

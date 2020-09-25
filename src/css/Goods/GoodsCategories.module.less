@@ -1,0 +1,30 @@
+@import "../common.less";
+.categories {
+  background: #fff;
+  padding: 24px;
+  height: 100%;
+  .categoryTitle {
+    > span {
+      visibility: hidden;
+      padding-left: 10px;
+      transition: all linear 0.35s;
+      display: inline-block;
+      vertical-align: middle;
+      a {
+        margin: 0 5px;
+      }
+    }
+    &:hover {
+      > span {
+        visibility: visible;
+      }
+    }
+  }
+  > h2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #e8e8e8;
+    padding-bottom: 23px;
+  }
+}
