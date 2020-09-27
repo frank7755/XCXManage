@@ -37,6 +37,9 @@ export default {
   '/goodsadd': {
     component: loadable(() => import('~js/pages/Goods/GoodsAdd/Index.jsx')),
   },
+  '/goodsedit': {
+    component: loadable(() => import('~js/pages/Goods/GoodsEdit.jsx')),
+  },
   '/groupsort': {
     component: loadable(() => import('~js/pages/Goods/GroupSort.jsx')),
   },

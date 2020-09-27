@@ -1,6 +1,21 @@
 import React, { Fragment } from 'react';
 import styles from '~css/Goods/GoodsEdit.module.less';
-import { Form, Input, Select, Upload, Icon, Modal, Button, Table, Row, Col, Cascader, Avatar, message, Tooltip } from 'antd';
+import {
+  Form,
+  Input,
+  Select,
+  Icon,
+  Modal,
+  Button,
+  Table,
+  Row,
+  Col,
+  Cascader,
+  Avatar,
+  message,
+  Tooltip,
+  InputNumber,
+} from 'antd';
 import request from '~js/utils/request';
 import Picture from '../Upload/Pictures';
 import BraftEditor from 'braft-editor';
@@ -113,7 +128,6 @@ class GetImageGroup extends React.Component {
         >
           <Picture
             id={this.props.id}
-            yztoken={this.props.yztoken}
             onChange={this.getImageUrl}
             checkedID={checkedID}
             checkedData={imgData}
@@ -206,99 +220,56 @@ export default class App extends React.Component {
       method: 'post',
       body: {
         id: this.props.id,
-        shop_type: store.get(shopType),
       },
     }).then((payload) => {
       this.setState({ goodsSort: payload.pageData });
     });
 
-    store.get(shopType) == '2'
-      ? request('/api/t_goods_sku_select', {
-          method: 'post',
-          body: {
-            id: this.props.id,
-            item_id: this.props.match.params.id,
-          },
-        }).then((payload) => {
-          this.setState({
-            goodsData: payload.pageData,
-            imgList: payload.pageData.photo_info,
-            editorState: BraftEditor.createEditorState(payload.pageData.desc),
-            kv_list: payload.kv_list,
-            item_id: payload.pageData.item_id,
-            imgIds: payload.pageData.photo_info.map((item) => item.image_id),
-          });
-        })
-      : request('/api/catering/t_goods/selectdef', {
-          method: 'post',
-          body: {
-            id: this.props.id,
-            item_id: this.props.match.params.id,
-          },
-        }).then((payload) => {
-          this.setState({
-            goodsData: payload,
-            imgList: payload.photo_info,
-            editorState: BraftEditor.createEditorState(payload.desc),
-            item_id: payload.item_id,
-            imgIds: payload.photo_info.map((item) => item.image_id),
-          });
-        });
-
-    this.setState({ shopType: store.get(shopType) });
+    request('/api/t_goods_sku_select', {
+      method: 'post',
+      body: {
+        id: this.props.id,
+        item_id: this.props.match.params.id,
+      },
+    }).then((payload) => {
+      this.setState({
+        goodsData: payload.pageData,
+        imgList: payload.pageData.photo_info,
+        editorState: BraftEditor.createEditorState(payload.pageData.desc),
+        kv_list: payload.kv_list,
+        item_id: payload.pageData.item_id,
+        imgIds: payload.pageData.photo_info.map((item) => item.image_id),
+      });
+    });
   }
 
   handleSubmit = () => {
-    const { ruleSetData, imgList, editorState, item_id, imgIds, shopType } = this.state;
+    const { ruleSetData, imgList, editorState, item_id, imgIds } = this.state;
 
     this.props.form.validateFields((err, value) => {
       if (!err) {
-        shopType == '2'
-          ? request('/api/t_goods/update', {
-              headers: { 'Content-Type': 'application/json;' },
-              method: 'post',
-              body: {
-                ...value,
-                id: this.props.id,
-                yz_token_info: this.props.yztoken,
-                item_id: item_id,
-                status: 0,
-                item_type: 0,
-                image_ids: imgIds.join(','),
-                tag_ids: value.tag_ids[1],
-                sku_stocks: ruleSetData,
-                desc: editorState.toHTML(),
-              },
-            })
-              .then(() => {
-                message.success('修改成功');
-                this.props.history.push('/goodssearch');
-              })
-              .catch((error) => {
-                message.error(error.message);
-              })
-          : request('/api/catering/t_goods/update', {
-              headers: { 'Content-Type': 'application/json;' },
-              method: 'post',
-              body: {
-                ...value,
-                id: this.props.id,
-                yz_token_info: this.props.yztoken,
-                item_id: item_id,
-                status: 0,
-                item_type: 0,
-                image_ids: imgIds.join(','),
-                tag_ids: value.tag_ids[1],
-                desc: editorState.toHTML(),
-              },
-            })
-              .then(() => {
-                message.success('修改成功');
-                this.props.history.push('/goodssearch');
-              })
-              .catch((error) => {
-                message.error(error.message);
-              });
+        request('/api/tgoods_upd', {
+          headers: { 'Content-Type': 'application/json;' },
+          method: 'post',
+          body: {
+            ...value,
+            id: this.props.id,
+            item_id: item_id,
+            status: 0,
+            item_type: 0,
+            image_ids: imgIds.join(','),
+            tag_ids: value.tag_ids[1],
+            sku_stocks: ruleSetData,
+            desc: editorState.toHTML(),
+          },
+        })
+          .then(() => {
+            message.success('修改成功');
+            this.props.history.push('/goodssearch');
+          })
+          .catch((error) => {
+            message.error(error.message);
+          });
       }
     });
   };
@@ -389,33 +360,29 @@ export default class App extends React.Component {
               rules: [{ required: true, message: '请输入商品名称' }],
             })(<Input placeholder="请输入商品名称" />)}
           </FormItem>
-          {shopType == '2' ? (
-            <FormItem
-              label="商品卖点"
-              help={
-                <p>
-                  在商品列表页，详情页标题下面展示卖点信息,建议60字以内{' '}
-                  <Tooltip
-                    placement="bottom"
-                    title={
-                      <div style={{ width: 230, margin: '0 auto' }}>
-                        <img src={require('~images/sellpoint.jpg')} style={{ width: '100%' }}></img>
-                      </div>
-                    }
-                  >
-                    <a>查看示例</a>
-                  </Tooltip>
-                  ,
-                </p>
-              }
-            >
-              {getFieldDecorator('sell_point', {
-                initialValue: goodsData && goodsData.sell_point,
-              })(<Input />)}
-            </FormItem>
-          ) : (
-            ''
-          )}
+
+          <FormItem
+            label="商品卖点"
+            help={
+              <p>
+                在商品列表页，详情页标题下面展示卖点信息,建议60字以内{' '}
+                <Tooltip
+                  placement="bottom"
+                  title={
+                    <div style={{ width: 230, margin: '0 auto' }}>
+                      <img src={require('~images/sellpoint.jpg')} style={{ width: '100%' }}></img>
+                    </div>
+                  }
+                >
+                  <a>查看示例</a>
+                </Tooltip>
+              </p>
+            }
+          >
+            {getFieldDecorator('sell_point', {
+              initialValue: goodsData && goodsData.sell_point,
+            })(<Input />)}
+          </FormItem>
           <Row style={{ margin: '24px 0' }}>
             <Col span={4}>
               <p style={{ textAlign: 'right', lineHeight: '32px', marginRight: 5, color: '#000' }}>
@@ -423,34 +390,45 @@ export default class App extends React.Component {
               </p>
             </Col>
             <Col span={10}>
-              <GetImageGroup
-                id={this.props.id}
-                imgList={imgList}
-                yztoken={this.props.yztoken}
-                onChange={this.getImageId}
-              ></GetImageGroup>
+              <GetImageGroup id={this.props.id} imgList={imgList} onChange={this.getImageId}></GetImageGroup>
             </Col>
           </Row>
           <FormItem label="选择分组">
             {getFieldDecorator('tag_ids', {
-              initialValue: goodsData.tag_ids ? goodsData.tag_ids : [],
+              initialValue: goodsData ? goodsData.tag_ids : [],
+              rules: [{ required: true, message: '请选择分组' }],
             })(<Cascader options={goodsSort} />)}
           </FormItem>
-          {shopType == '2' ? (
-            <FormItem label="划线价">
-              {getFieldDecorator('origin_price', {
-                initialValue: goodsData && goodsData.origin_price,
-                rules: [{ required: true, message: '请填写划线价' }],
-              })(<Input type="text"></Input>)}
-            </FormItem>
-          ) : (
-            <FormItem label="商品价格">
-              {getFieldDecorator('price', {
-                initialValue: goodsData && goodsData.price,
-                rules: [{ required: true, message: '请填写商品价格' }],
-              })(<Input type="text"></Input>)}
-            </FormItem>
-          )}
+          <FormItem label="商品单价">
+            {getFieldDecorator('price', {
+              initialValue: goodsData && goodsData.price,
+              rules: [{ required: true, message: '请填写商品单价' }],
+            })(
+              <InputNumber
+                formatter={(value) => `\￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                parser={(value) => value.replace(/\￥\s?|(,*)/g, '')}
+                style={{ width: '100%' }}
+              ></InputNumber>
+            )}
+          </FormItem>
+          <FormItem label="划线价">
+            {getFieldDecorator('origin_price', {
+              initialValue: goodsData && goodsData.origin_price,
+              rules: [{ required: true, message: '请填写划线价' }],
+            })(
+              <InputNumber
+                formatter={(value) => `\￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                parser={(value) => value.replace(/\￥\s?|(,*)/g, '')}
+                style={{ width: '100%' }}
+              ></InputNumber>
+            )}
+          </FormItem>
+          <FormItem label="库存">
+            {getFieldDecorator('quantity', {
+              initialValue: goodsData && goodsData.quantity,
+              rules: [{ required: true, message: '请填写库存' }],
+            })(<Input type="text"></Input>)}
+          </FormItem>
           <FormItem label="是否上架">
             {getFieldDecorator('is_display', {
               initialValue: goodsData && goodsData.is_display,
@@ -462,29 +440,23 @@ export default class App extends React.Component {
               </Select>
             )}
           </FormItem>
-          {shopType == '2' ? (
-            <h2 className="title">
-              <span>
-                价格库存
-                <span style={{ color: '#fc5050', fontSize: 14, fontWeight: 'normal', marginLeft: 5 }}>
-                  (修改规格值与规格名后,请重新点击下方确定)
-                </span>
+
+          <h2 className="title">
+            <span>
+              价格库存
+              <span style={{ color: '#fc5050', fontSize: 14, fontWeight: 'normal', marginLeft: 5 }}>
+                (修改规格值与规格名后,请重新点击下方确定)
               </span>
-            </h2>
-          ) : (
-            ''
-          )}
+            </span>
+          </h2>
         </Form>
-        {shopType == '2' ? (
-          <RuleSetEdit
-            sku={kv_list}
-            item_id={this.props.match.params.id}
-            id={this.props.id}
-            onChange={(val) => this.getRuleSetData(val)}
-          ></RuleSetEdit>
-        ) : (
-          ''
-        )}
+
+        <RuleSetEdit
+          sku={kv_list}
+          item_id={this.props.match.params.id}
+          id={this.props.id}
+          onChange={(val) => this.getRuleSetData(val)}
+        ></RuleSetEdit>
 
         <h2 className="title">
           <span>商品详情</span>
