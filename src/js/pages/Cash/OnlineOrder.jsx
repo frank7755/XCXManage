@@ -344,6 +344,7 @@ class ListItemTable extends React.Component {
     selectedRowKeys: [],
     visible: false,
     ExpressModal: false,
+    refundShow: false,
   };
 
   expressType = {
@@ -624,6 +625,31 @@ class ListItemTable extends React.Component {
       ExpressModal: true,
     });
   };
+  showRefundModal = () => {
+    this.setState({ refundShow: true });
+  };
+
+  handleRefundOk = (tid) => {
+    this.props.form.validateFields((err, value) => {
+      if (!err) {
+        request('/api/secapi/pay/refund', {
+          method: 'post',
+          body: {
+            id: this.props.id,
+            tid: tid,
+            ...value,
+          },
+          headers: { 'Content-Type': 'application/json;' },
+        })
+          .then((payload) => {
+            message.success('退款成功');
+            this.setState({ refundShow: false });
+            onChange && onChange();
+          })
+          .catch((error) => message.error(error.message));
+      }
+    });
+  };
 
   handleOk = (e) => {
     console.log(e);
@@ -633,15 +659,15 @@ class ListItemTable extends React.Component {
   };
 
   handleCancel = (e) => {
-    console.log(e);
     this.setState({
       ExpressModal: false,
+      refundShow: false,
     });
   };
 
-
   render() {
     const { data, item, outData, ...rest } = this.props;
+    const { getFieldDecorator } = this.props.form;
 
     return (
       <div className={styles.listItem}>
@@ -651,9 +677,47 @@ class ListItemTable extends React.Component {
           </span>
           <div>
             {outData.express_mode == '线上' && (
-              <a className="textDelete" style={{ marginRight: 10 }} onClick={this.handleRefund(outData, this.props.id)}>
-                线上订单退款
-              </a>
+              <Fragment>
+                <a className="textDelete" style={{ marginRight: 10 }} onClick={this.showRefundModal}>
+                  线上订单退款
+                </a>
+                <Modal
+                  title="线上退款"
+                  visible={this.state.refundShow}
+                  onOk={() => this.handleRefundOk(outData.tid)}
+                  onCancel={this.handleCancel}
+                >
+                  <Form>
+                    <FormItem label="退货金额">
+                      {getFieldDecorator('refund_fee', {
+                        initialValue: outData.payment,
+                        rules: [
+                          {
+                            required: true,
+                            message: '请输入退货金额',
+                          },
+                        ],
+                      })(<Input placeholder="请输入退货金额" />)}
+                    </FormItem>
+                    <FormItem label="退货方式">
+                      {getFieldDecorator('refund_type', {
+                        initialValue: 2,
+                        rules: [
+                          {
+                            required: true,
+                            message: '请选择退货方式',
+                          },
+                        ],
+                      })(
+                        <Select>
+                          <Option value={1}>买家申请退款</Option>
+                          <Option value={2}>商家主动退款</Option>
+                        </Select>
+                      )}
+                    </FormItem>
+                  </Form>
+                </Modal>
+              </Fragment>
             )}
             {outData.express_type == 0 && outData.status == 'WAIT_BUYER_CONFIRM_GOODS' && (
               <a
