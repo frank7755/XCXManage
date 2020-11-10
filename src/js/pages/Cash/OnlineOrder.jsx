@@ -342,6 +342,7 @@ class OrderList extends React.Component {
 class ListItemTable extends React.Component {
   state = {
     selectedRowKeys: [],
+    expressData: null,
     visible: false,
     ExpressModal: false,
     refundShow: false,
@@ -620,7 +621,8 @@ class ListItemTable extends React.Component {
         delivery_order: outData.delivery_id,
       },
       headers: { 'Content-Type': 'application/json;' },
-    }).then((payload) => console.log(payload));
+    }).then((payload) => this.setState({ expressData: JSON.parse(payload.pageData[0].data) }));
+
     this.setState({
       ExpressModal: true,
     });
@@ -668,6 +670,7 @@ class ListItemTable extends React.Component {
   render() {
     const { data, item, outData, ...rest } = this.props;
     const { getFieldDecorator } = this.props.form;
+    const { expressData } = this.state;
 
     return (
       <div className={styles.listItem}>
@@ -728,12 +731,15 @@ class ListItemTable extends React.Component {
               </a>
             )}
             <Link to={`/onlineorder/${outData.tid}`}>查看详情</Link>
-            <Modal
-              title="快递轨迹查看"
-              visible={this.state.ExpressModal}
-              onOk={this.handleOk}
-              onCancel={this.handleCancel}
-            ></Modal>
+            <Modal title="快递轨迹查看" visible={this.state.ExpressModal} onOk={this.handleOk} onCancel={this.handleCancel}>
+              {expressData &&
+                expressData.map((item) => (
+                  <div class={styles.express}>
+                    <p>{moment(item.time).format('YYYY-MM-DD')}</p>
+                    <p>{item.context}</p>
+                  </div>
+                ))}
+            </Modal>
           </div>
         </div>
         <Table
