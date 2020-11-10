@@ -5,19 +5,14 @@ export default [
     children: [
       {
         key: 801,
-        title: '收银中心',
-        src: '/cashcenter',
+        title: '菜品下单',
+        src: '/foodscash',
       },
       {
         key: 802,
         title: '销售查询',
-        src: '/sellsearch',
-      },
-      {
-        key: 803,
-        title: '线上订单查询',
         src: '/onlineorder',
-      }
+      },
     ],
   },
   {
@@ -33,6 +28,11 @@ export default [
         key: 403,
         title: '商品添加',
         src: '/goodsadd',
+      },
+      {
+        key: 403,
+        title: '商品分组',
+        src: '/groupsort',
       },
     ],
   },
@@ -86,7 +86,7 @@ export default [
         key: 102,
         title: '店员管理',
         src: '/staffmanage',
-      }
+      },
     ],
   },
   {

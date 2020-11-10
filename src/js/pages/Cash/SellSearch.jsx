@@ -12,7 +12,7 @@ import {
   getLastWeek,
   getToday,
   getLast7Days,
-  getYesterday
+  getYesterday,
 } from '~js/utils/date-fns';
 import serveTable from '~js/components/serveTable';
 
@@ -26,12 +26,12 @@ class ReturnGoods extends React.Component {
     visible: false,
     GuideSource: [],
     staff_id: '',
-    staff_name: ''
+    staff_name: '',
   };
 
   showModal = () => {
     this.setState({
-      visible: true
+      visible: true,
     });
   };
 
@@ -48,9 +48,9 @@ class ReturnGoods extends React.Component {
             pay_type: pay_type,
             yz_token_info: this.props.yztoken,
             ...values,
-            ...this.props.record
-          }
-        }).then(payload => {
+            ...this.props.record,
+          },
+        }).then((payload) => {
           this.setState({ visible: false });
           message.success('退货成功');
           this.props.form.resetFields();
@@ -63,31 +63,31 @@ class ReturnGoods extends React.Component {
     });
   };
 
-  handleCancel = e => {
+  handleCancel = (e) => {
     this.setState({
-      visible: false
+      visible: false,
     });
   };
 
   @debounce(150)
-  handleGuideSearch = value => {
+  handleGuideSearch = (value) => {
     const { id } = this.props;
 
     value
       ? request('/api/select_employess', {
           method: 'post',
-          body: { id: id, name: value }
-        }).then(payload => this.setState({ GuideSource: payload.pageData }))
+          body: { id: id, name: value },
+        }).then((payload) => this.setState({ GuideSource: payload.pageData }))
       : [];
   };
 
-  onGuideSelect = value => {
+  onGuideSelect = (value) => {
     const { GuideSource } = this.state;
-    const GuideInfo = GuideSource.filter(item => item.staff_id == value)[0];
+    const GuideInfo = GuideSource.filter((item) => item.staff_id == value)[0];
     this.setState({ staff_id: GuideInfo.staff_id, staff_name: GuideInfo.staff_name });
   };
 
-  renderGuideOption = item => {
+  renderGuideOption = (item) => {
     return (
       <Option key={item.staff_id}>
         <div className="global-search-item">{item.staff_name + ' ' + item.staff_id}</div>
@@ -125,9 +125,9 @@ class ReturnGoods extends React.Component {
                 rules: [
                   {
                     required: true,
-                    message: '请搜索并填写导购员姓名'
-                  }
-                ]
+                    message: '请搜索并填写导购员姓名',
+                  },
+                ],
               })(<Input disabled></Input>)}
             </FormItem>
             <FormItem label="导购员id">
@@ -136,9 +136,9 @@ class ReturnGoods extends React.Component {
                 rules: [
                   {
                     required: true,
-                    message: '请搜索并填写导购员id'
-                  }
-                ]
+                    message: '请搜索并填写导购员id',
+                  },
+                ],
               })(<Input disabled></Input>)}
             </FormItem>
             <FormItem label="退货金额">
@@ -147,9 +147,9 @@ class ReturnGoods extends React.Component {
                 rules: [
                   {
                     required: true,
-                    message: '请填写退货金额'
-                  }
-                ]
+                    message: '请填写退货金额',
+                  },
+                ],
               })(<Input type="text"></Input>)}
             </FormItem>
           </Form>
@@ -162,40 +162,40 @@ class ReturnGoods extends React.Component {
 class GoodsDetails extends React.Component {
   state = {
     visible: false,
-    data: []
+    data: [],
   };
 
   columns = [
     {
       title: '商品编号',
-      dataIndex: 'sku_id'
+      dataIndex: 'sku_id',
     },
     {
       title: '商品名称',
-      dataIndex: 'name'
+      dataIndex: 'name',
     },
     {
       title: '商品规格',
-      dataIndex: 'properties_name_json'
+      dataIndex: 'properties_name_json',
     },
     {
       title: '商品数量',
       dataIndex: 'count',
-      align: 'center'
+      align: 'center',
     },
     {
       title: '商品单价',
       dataIndex: 'price',
       render(val) {
         return `￥ ${formatThousands(val)}`;
-      }
+      },
     },
     {
       title: '实付金额',
       dataIndex: 'newPrice_num',
       render(val) {
         return `￥ ${formatThousands(val)}`;
-      }
+      },
     },
     {
       title: '操作',
@@ -211,8 +211,8 @@ class GoodsDetails extends React.Component {
           record={record}
           onChange={this.refreshTable}
         ></ReturnGoods>
-      )
-    }
+      ),
+    },
   ];
   refreshTable = () => {
     request('/api/order_management/select', {
@@ -220,14 +220,14 @@ class GoodsDetails extends React.Component {
       body: {
         id: this.props.id,
         pur_no: this.props.orderNum,
-        type: this.props.type
-      }
-    }).then(payload => this.setState({ data: payload.pageData.skus }));
+        type: this.props.type,
+      },
+    }).then((payload) => this.setState({ data: payload.pageData.skus }));
   };
 
   showModal = () => {
     this.setState({
-      visible: true
+      visible: true,
     });
 
     request('/api/order_management/select', {
@@ -235,18 +235,18 @@ class GoodsDetails extends React.Component {
       body: {
         id: this.props.id,
         pur_no: this.props.orderNum,
-        type: this.props.type
-      }
-    }).then(payload => this.setState({ data: payload.pageData.skus }));
+        type: this.props.type,
+      },
+    }).then((payload) => this.setState({ data: payload.pageData.skus }));
   };
 
   handleOk = () => {
     this.setState({ visible: false });
   };
 
-  handleCancel = e => {
+  handleCancel = (e) => {
     this.setState({
-      visible: false
+      visible: false,
     });
   };
 
@@ -271,35 +271,35 @@ class SearchTable extends React.Component {
   columns = [
     {
       title: '订单号',
-      dataIndex: 'pur_no'
+      dataIndex: 'tid',
     },
     {
       title: '订单金额',
       dataIndex: 'pur_sal',
       render(val) {
         return `￥ ${formatThousands(val)}`;
-      }
+      },
     },
     {
       title: '实付金额',
       dataIndex: 'sal',
       render(val) {
         return `￥ ${formatThousands(val)}`;
-      }
+      },
     },
     {
       title: '创建时间',
       dataIndex: 'create_time',
       render(val) {
         return moment(val).format('YYYY-MM-DD');
-      }
+      },
     },
     {
       title: '订单类型',
       dataIndex: 'status',
       render(val) {
         return val == 0 ? '销售' : '退货';
-      }
+      },
     },
     {
       title: '操作',
@@ -315,8 +315,8 @@ class SearchTable extends React.Component {
             yztoken={this.props.yztoken}
           ></GoodsDetails>
         );
-      }
-    }
+      },
+    },
   ];
 
   handleSearch = ({ dateRange = [], ...rest }) => {
@@ -324,7 +324,7 @@ class SearchTable extends React.Component {
 
     const { table, id } = this.props;
 
-    table.search({ id, type: 1, start_time, end_time, ...rest }, { ...table.pagination, current: 1 });
+    table.search({ id, start_time, end_time, ...rest }, { ...table.pagination, current: 1 });
   };
 
   getDateRanges() {
@@ -333,7 +333,7 @@ class SearchTable extends React.Component {
       昨天: getYesterday(),
       本周: getCurrWeek(),
       上周: getLastWeek(),
-      本月: getCurrMonth()
+      本月: getCurrMonth(),
     };
   }
 
@@ -358,18 +358,24 @@ class SearchTable extends React.Component {
                   <Col span={8}>
                     <span className={styles.rowItem}>
                       <label>订单号：</label>
-                      {getFieldDecorator('pur_no')(<Input placeholder="请输入订单号" style={{ width: 'calc(100% - 80px)' }} />)}
+                      {getFieldDecorator('desk_no')(
+                        <Input placeholder="请输入订单号" style={{ width: 'calc(100% - 80px)' }} />
+                      )}
                     </span>
                   </Col>
                   <Col span={8}>
                     <span className={styles.rowItem}>
-                      <label>订单类型：</label>
+                      <label>是否结账：</label>
                       {getFieldDecorator('status', {
-                        initialValue: 0
+                        initialValue: '',
                       })(
                         <Select style={{ width: 'calc(100% - 80px)' }}>
-                          <Option value={0}>销售</Option>
-                          <Option value={1}>退货</Option>
+                          <Option value="">全部</Option>
+                          <Option value="WAIT_BUYER_PAY">待支付</Option>
+                          <Option value="WAIT_SELLER_SEND_GOODS">待发货</Option>
+                          <Option value="WAIT_BUYER_CONFIRM_GOODS">已发货</Option>
+                          <Option value="TRADE_SUCCESS">已完成</Option>
+                          <Option value="TRADE_CLOSED">已关闭</Option>
                         </Select>
                       )}
                     </span>
@@ -378,7 +384,7 @@ class SearchTable extends React.Component {
                     <span className={styles.rowItem}>
                       <label>选择日期：</label>
                       {getFieldDecorator('dateRange', {
-                        initialValue: [moment().subtract(1, 'year'), moment()]
+                        initialValue: [moment().subtract(1, 'year'), moment()],
                       })(
                         <RangePicker allowClear={false} style={{ width: 'calc(100% - 80px)' }} ranges={this.getDateRanges()} />
                       )}
@@ -415,11 +421,11 @@ class SearchTable extends React.Component {
 }
 export default class App extends React.Component {
   render() {
-    const { id, yztoken } = this.props;
+    const { id } = this.props;
 
     return (
       <div className={styles.sellSearch}>
-        <SearchTable id={id} yztoken={yztoken} source="/api/order_management/select"></SearchTable>
+        <SearchTable id={id} source="/api/catering/order_management_select"></SearchTable>
       </div>
     );
   }

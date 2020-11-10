@@ -16,11 +16,8 @@ export default {
     layout: false,
     component: loadable(() => import('~js/pages/Forget.jsx')),
   },
-  '/cashcenter': {
-    component: loadable(() => import('~js/pages/Cash/CashCenter.jsx')), //收银中心
-  },
-  '/sellsearch': {
-    component: loadable(() => import('~js/pages/Cash/SellSearch.jsx')), //销售查询
+  '/foodsCash': {
+    component: loadable(() => import('~js/pages/Foods/FoodsCash.jsx')), //收银中心
   },
   '/onlineorder': {
     component: loadable(() => import('~js/pages/Cash/OnlineOrder.jsx')), //线上订单查询

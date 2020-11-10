@@ -270,7 +270,7 @@ class ChangeGroup extends React.Component {
       method: 'post',
       body: {
         shop_type: store.get(shopType),
-        id:store.get(userId)
+        id: store.get(userId),
       },
     }).then((payload) => {
       this.setState({ data: payload.pageData, visible: true });
@@ -447,7 +447,7 @@ class GoodsTable extends React.Component {
     request('/api/t_goods_fz_select', {
       method: 'post',
       body: {
-        shop_type: store.get(shopType),
+        id: store.get(userId),
       },
     }).then((payload) => {
       this.setState({ goodsSort: payload.pageData });

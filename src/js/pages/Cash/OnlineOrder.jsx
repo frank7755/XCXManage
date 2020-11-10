@@ -18,13 +18,13 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 const status = {
-  '1': '买家发起维权',
-  '10': '卖家拒绝退款',
-  '20': '卖家已经同意退货，等待买家退货，',
-  '30': '买家已经退货，等待卖家确认收货',
-  '40': '卖家未收到货,拒绝退款',
-  '50': '退款关闭',
-  '60': '退款成功',
+  1: '买家发起维权',
+  10: '卖家拒绝退款',
+  20: '卖家已经同意退货，等待买家退货，',
+  30: '买家已经退货，等待卖家确认收货',
+  40: '卖家未收到货,拒绝退款',
+  50: '退款关闭',
+  60: '退款成功',
 };
 const FormItem = Form.Item;
 
@@ -37,15 +37,11 @@ class SendGoods extends React.Component {
   };
 
   showModal = () => {
-    request('/api/logistics_express', {
+    request('/api/kuaidi_sel', {
       method: 'post',
-      body: {
-        yz_token_info: this.props.yztoken,
-      },
     }).then((payload) => this.setState({ express: payload.pageData }));
     this.setState({
       visible: true,
-      selectedRowKeys: [],
     });
   };
 
@@ -55,126 +51,56 @@ class SendGoods extends React.Component {
     });
   };
 
-  columns = [
-    {
-      title: '商品',
-      dataIndex: 'title',
-      render: (title, record) => {
-        const skuName = JSON.parse(record.sku_properties_name);
-
-        if (skuName.length > 0) {
-          return (
-            <Fragment>
-              <a style={{ marginBottom: 10, display: 'inline-block' }}>{title}</a>
-              <p style={{ margin: 0 }}>
-                {skuName.map((item) => (
-                  <span key={item.k} style={{ marginRight: 10 }}>
-                    {item.k + ':' + item.v}
-                  </span>
-                ))}
-              </p>
-            </Fragment>
-          );
-        }
+  handleDirectSend = () => {
+    const { outData, onChange } = this.props;
+    request('/api/wx_confirm_developers', {
+      method: 'post',
+      body: {
+        id: this.props.id,
+        express_type: outData.express_type,
+        tid: outData.tid,
       },
-    },
-    {
-      title: '数量',
-      dataIndex: 'num',
-    },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      render: (status) => {
-        return (
-          <Fragment>
-            {status == null && <span className="textDelete">未发货</span>}
-            {status == '1' && <span className="textSuccess">已发货</span>}
-            {status == '2' && <span className="textEdit">维权中</span>}
-          </Fragment>
-        );
-      },
-    },
-    {
-      title: '运单号',
-    },
-  ];
+      headers: { 'Content-Type': 'application/json;' },
+    }).then((payload) => {
+      message.success('发货成功！');
+      onChange && onChange();
+    });
+  };
 
   handleSend = () => {
-    const { type } = this.state;
-    const { onChange, selectedRowKeys } = this.props;
+    const { onChange } = this.props;
 
-    if (type == 'express') {
-      if (selectedRowKeys.length) {
-        this.props.form.validateFields((err, value) => {
-          if (!err) {
-            request('/api/order_management/yz_confirm_developers', {
-              method: 'post',
-              body: {
-                id: this.props.id,
-                tid: this.props.tid,
-                yz_token_info: this.props.yztoken,
-                oids: selectedRowKeys.join(','),
-                ...value,
-              },
-            })
-              .then((payload) => {
-                message.success('发货成功');
-                this.setState({ visible: false });
-                onChange && onChange([]);
-              })
-              .catch((error) => message.error(error.message));
-          }
-        });
-      } else {
-        message.error('请选择需要发货的商品');
-      }
-    } else {
-      if (selectedRowKeys.length) {
-        request('/api/order_management/yz_order_confirm', {
+    this.props.form.validateFields((err, value) => {
+      if (!err) {
+        const { outData } = this.props;
+        request('/api/wx_confirm_developers', {
           method: 'post',
           body: {
             id: this.props.id,
-            tid: this.props.tid,
-            yz_token_info: this.props.yztoken,
-            oids: selectedRowKeys.join(','),
+            express_type: outData.express_type,
+            tid: outData.tid,
+            ...value,
           },
+          headers: { 'Content-Type': 'application/json;' },
         })
           .then((payload) => {
             message.success('发货成功');
+            onChange && onChange();
             this.setState({ visible: false });
-            onChange && onChange([]);
           })
           .catch((error) => message.error(error.message));
-      } else {
-        message.error('请选择需要发货的商品');
       }
-    }
-  };
-  handleGroup = (e) => {
-    this.setState({
-      type: e.target.value,
     });
   };
 
   render() {
-    const { visible, express, type } = this.state;
+    const { visible, express } = this.state;
     const { getFieldDecorator } = this.props.form;
-    const { data, disabled, receiver_name, receiver_tel, address } = this.props;
-    const rowSelection = {
-      selectedRowKeys: this.props.selectedRowKeys,
-      onChange: (selectedRowKeys, selectedRows) => {
-        const { onChange } = this.props;
-        onChange && onChange(selectedRowKeys);
-      },
-      getCheckboxProps: (record) => ({
-        disabled: record.status != null, // Column configuration not to be checked
-      }),
-    };
+    const { outData } = this.props;
 
     return (
       <Fragment>
-        <Button type="default" disabled={disabled} onClick={this.showModal}>
+        <Button type="default" onClick={outData.express_type == 0 ? this.showModal : this.handleDirectSend}>
           发货
         </Button>
         <Modal
@@ -196,55 +122,44 @@ class SendGoods extends React.Component {
             showIcon
           />
           <h3 className={styles.tableTitle}>选择商品</h3>
-          <Table dataSource={data} columns={this.columns} rowKey="oid" pagination={false} rowSelection={rowSelection}></Table>
           <div className={styles.customerInfo}>
             <span>配送信息</span>
             <section>
               <p>
                 <span>收货人：</span>
-                {receiver_name + ' ' + receiver_tel}
+                {outData.receiver_name + ' ' + outData.receiver_tel}
               </p>
               <p>
                 <span>收货地址：</span>
-                {address}
+                {outData.address}
               </p>
             </section>
           </div>
-          <div className={styles.sendChoose}>
-            <span>发货方式:</span>
-            <div>
-              <Radio.Group value={this.state.type} onChange={this.handleGroup}>
-                <Radio value={'noExpress'}>无需物流</Radio>
-                <Radio value={'express'}>物流发货</Radio>
-              </Radio.Group>
-            </div>
+
+          <div className={styles.customerInfo}>
+            <span>快递</span>
+            <section>
+              <FormItem label="物流公司">
+                {getFieldDecorator('delivery_id', {
+                  rules: [{ required: true, message: '请选择物流公司' }],
+                })(
+                  <Select style={{ width: '100%' }} placeholder="请选择快递">
+                    {express &&
+                      express.map((item) => (
+                        <Option key={item.delivery_id} value={item.delivery_id}>
+                          {item.delivery_name}
+                        </Option>
+                      ))}
+                  </Select>
+                )}
+              </FormItem>
+              <FormItem label="快递单号">
+                {getFieldDecorator('delivery_order', {
+                  rules: [{ required: true, message: '请输入快递单号' }],
+                })(<Input type="text" style={{ width: '100%' }} placeholder="请输入快递单号"></Input>)}
+              </FormItem>
+            </section>
           </div>
-          {type == 'express' && (
-            <div className={styles.customerInfo}>
-              <span>快递</span>
-              <section>
-                <FormItem label="物流公司">
-                  {getFieldDecorator('out_stype', {
-                    rules: [{ required: true, message: '请选择物流公司' }],
-                  })(
-                    <Select style={{ width: '100%' }} placeholder="请选择快递">
-                      {express &&
-                        express.map((item) => (
-                          <Option key={item.id} value={item.id}>
-                            {item.name}
-                          </Option>
-                        ))}
-                    </Select>
-                  )}
-                </FormItem>
-                <FormItem label="快递单号">
-                  {getFieldDecorator('out_sid', {
-                    rules: [{ required: true, message: '请输入快递单号' }],
-                  })(<Input type="text" style={{ width: '100%' }} placeholder="请输入快递单号"></Input>)}
-                </FormItem>
-              </section>
-            </div>
-          )}
         </Modal>
       </Fragment>
     );
@@ -279,11 +194,10 @@ class OrderList extends React.Component {
       const [start_time, end_time] = value.dateRange;
 
       if (!err) {
-        request('/api/order_management/goods_select', {
+        request('/api/catering/order_management_select', {
           method: 'post',
           body: {
             id: this.props.id,
-            yz_token_info: this.props.yztoken,
             type: 1,
             start_time: start_time,
             end_time: end_time,
@@ -343,16 +257,29 @@ class OrderList extends React.Component {
             <Col span={8}>
               <span className={styles.rowItem}>
                 <label>订单状态：</label>
-                {getFieldDecorator('status_str', { initialValue: '' })(
+                {getFieldDecorator('status', { initialValue: '' })(
                   <Select style={{ width: 'calc(100% - 80px)' }}>
                     <Option value="">全部</Option>
-                    <Option value="待付款">待付款</Option>
-                    <Option value="待发货">待发货</Option>
-                    <Option value="已发货">已发货</Option>
-                    <Option value="已完成">已完成</Option>
-                    <Option value="已关闭">已关闭</Option>
-                    <Option value="退款中">退款中</Option>
+                    <Option value="WAIT_BUYER_PAY">待支付</Option>
+                    <Option value="WAIT_SELLER_SEND_GOODS">待发货</Option>
+                    <Option value="WAIT_BUYER_CONFIRM_GOODS">已发货</Option>
+                    <Option value="TRADE_SUCCESS">已完成</Option>
+                    <Option value="TRADE_CLOSED">已关闭</Option>
                   </Select>
+                )}
+              </span>
+            </Col>
+            <Col span={8}>
+              <span className={styles.rowItem}>
+                <label>桌号：</label>
+                {getFieldDecorator('desk_no')(<Input placeholder="请输入桌号" style={{ width: 'calc(100% - 80px)' }} />)}
+              </span>
+            </Col>
+            <Col span={8}>
+              <span className={styles.rowItem}>
+                <label>配送单号：</label>
+                {getFieldDecorator('delivery_id')(
+                  <Input placeholder="请输入配送单号" style={{ width: 'calc(100% - 80px)' }} />
                 )}
               </span>
             </Col>
@@ -372,32 +299,25 @@ class OrderList extends React.Component {
         </Form>
         <div className={styles.orderList}>
           <ul className={styles.listHeader}>
-            <li className={styles.listHeaderItem}>商品</li>
-            <li className={styles.listHeaderItem}>单价(元) / 数量</li>
-            <li className={styles.listHeaderItem}>售后</li>
-            <li className={styles.listHeaderItem}>买家 / 收货人</li>
-            <li className={styles.listHeaderItem}>实收金额(元)</li>
-            <li className={styles.listHeaderItem}>订单状态</li>
-            <li className={styles.listHeaderItem}>操作</li>
+            <li>商品</li>
+            <li>单价(元) / 数量</li>
+            <li className={styles.send}>配送方式/配送单号/桌号</li>
+            <li>买家 / 收货人</li>
+            <li>实收金额(元)</li>
+            <li>订单状态</li>
+            <li>操作</li>
           </ul>
           {listData &&
             listData.map((item) => (
               <ListItemTable
                 status_str={item.status_str}
-                item={item}
-                address={item.address}
-                receiver_name={item.receiver_name}
-                receiver_tel={item.receiver_tel}
-                key={item.tid}
                 data={item.order}
+                key={item.tid}
                 showHeader={false}
-                price={item.discount_price}
                 len={item.order.length}
-                rowKey={item.tid}
-                id={this.props.id}
-                yztoken={this.props.yztoken}
-                tid={item.tid}
+                outData={item}
                 onChange={this.fetch}
+                id={this.props.id}
               ></ListItemTable>
             ))}
         </div>
@@ -417,9 +337,50 @@ class OrderList extends React.Component {
     );
   }
 }
+
+@Form.create()
 class ListItemTable extends React.Component {
   state = {
     selectedRowKeys: [],
+    visible: false,
+    ExpressModal: false,
+  };
+
+  expressType = {
+    0: '快递发货',
+    1: '到店自提',
+    2: '同城配送',
+    9: '虚拟商品',
+    3: '收银台下单',
+    4: '扫码下单',
+  };
+
+  status_str = {
+    WAIT_BUYER_PAY: 'textEdit',
+    WAIT_SELLER_SEND_GOODS: 'textEdit',
+    WAIT_BUYER_CONFIRM_GOODS: 'textHighLight',
+    TRADE_SUCCESS: 'textSuccess',
+    TRADE_CLOSED: 'textDelete',
+  };
+
+  handlePay = (tid) => {
+    this.props.form.validateFields((err, val) => {
+      if (!err) {
+        request('/api/catering/order_management_account', {
+          method: 'post',
+          body: {
+            id: this.props.id,
+            tid: tid,
+            sal: val.sal,
+          },
+          headers: { 'Content-Type': 'application/json;' },
+        })
+          .then((payload) => {
+            message.success('结账成功');
+          })
+          .catch((error) => message.error(error.message));
+      }
+    });
   };
 
   handleSelect = (val) => {
@@ -427,6 +388,14 @@ class ListItemTable extends React.Component {
 
     this.setState({ selectedRowKeys: val });
     onChange && onChange();
+  };
+
+  showPayModal = () => {
+    this.setState({ visible: true });
+  };
+
+  handleCancel = () => {
+    this.setState({ visible: false });
   };
 
   renderContent = (val, record, index) => {
@@ -450,136 +419,52 @@ class ListItemTable extends React.Component {
     {
       title: '商品',
       dataIndex: 'title',
-      width: '40%',
+      width: '35%',
       render: (title, record) => {
-        const skuName = JSON.parse(record.sku_properties_name);
-
-        if (skuName.length > 0) {
-          return (
-            <Fragment>
-              <a href={record.goods_url} target="_blank" style={{ marginBottom: 10, display: 'inline-block' }}>
-                {title}
-              </a>
-              <p style={{ margin: 0 }}>
-                {skuName.map((item) => (
-                  <span key={item.k} style={{ marginRight: 10 }}>
-                    {item.k + ':' + item.v}
-                  </span>
-                ))}
-              </p>
-            </Fragment>
-          );
-        }
+        return (
+          <Fragment>
+            <p style={{ marginBottom: 10, display: 'inline-block', color: '#000' }}>{title}</p>
+            {record.sku_properties_name && <p style={{ margin: 0, color: '#666' }}>{record.sku_properties_name}</p>}
+          </Fragment>
+        );
       },
     },
     {
       title: '单价 / 数量',
-      dataIndex: 'discount_price',
+      dataIndex: 'price',
       width: '10%',
       align: 'center',
-      render(discount_price, record) {
+      render(price, record) {
         return (
           <Fragment>
-            <p>￥{formatThousands(discount_price)}</p>
+            <p>￥{formatThousands(record.price)}</p>
             <p>{record.num}</p>
           </Fragment>
         );
       },
     },
     {
-      title: '售后',
-      dataIndex: 'refund_type',
-      width: '10%',
+      title: '配送方式/配送单号/桌号',
+      dataIndex: 'express_type',
+      width: '15%',
       align: 'center',
       render: (val, record, index) => {
-        if (val == '1') {
-          return <Link to={`/onlineorder/action/${record.refund_id}`}>{status[record.refund_state]}</Link>;
-        } else if (val == null) {
-          return '';
-        }
-        return <Link to={`/onlineorder/action/${record.refund_id}`}>{status[60]}</Link>;
-      },
-    },
-    {
-      title: '买家/收货人',
-      dataIndex: 'receiver_name',
-      width: '10%',
-      align: 'center',
-      render: (val, record, index) => {
+        const { outData, len } = this.props;
         if (index == 0) {
           return {
             children: (
               <Fragment>
-                <p>{this.props.receiver_name}</p>
-                <p>{this.props.receiver_tel}</p>
+                <p>配送方式：{this.expressType[outData.express_type]}</p>
+                <p>配送单号：{outData.delivery_id}</p>
+                <p>桌号：{outData.desk_no}</p>
               </Fragment>
             ),
             props: {
-              rowSpan: this.props.len,
-            },
-          };
-        }
-        return {
-          children: (
-            <Fragment>
-              <p>{this.props.receiver_name}</p>
-              <p>{this.props.receiver_tel}</p>
-            </Fragment>
-          ),
-          props: {
-            rowSpan: 0,
-          },
-        };
-      },
-    },
-    {
-      title: '实收金额',
-      dataIndex: 'price',
-      width: '10%',
-      align: 'center',
-      render: (val, record, index) => {
-        if (index == 0) {
-          return {
-            children: `￥${formatThousands(this.props.price)}`,
-            props: {
-              rowSpan: this.props.len,
-            },
-          };
-        }
-        return {
-          children: `￥${formatThousands(this.props.price)}`,
-          props: {
-            rowSpan: 0,
-          },
-        };
-      },
-    },
-    {
-      title: '订单状态',
-      dataIndex: 'status_str',
-      width: '10%',
-      align: 'center',
-      render: (val, record, index) => {
-        if (index == 0) {
-          return {
-            children:
-              this.props.status_str == '已发货' || this.props.status_str == '已完成' ? (
-                <span className="textSuccess">{this.props.status_str}</span>
-              ) : (
-                <span className="textDelete">{this.props.status_str}</span>
-              ),
-            props: {
-              rowSpan: this.props.len,
+              rowSpan: len,
             },
           };
         } else {
           return {
-            children:
-              this.props.status_str == '已发货' || this.props.status_str == '已完成' ? (
-                <span className="textSuccess">{this.props.status_str}</span>
-              ) : (
-                <span className="textDelete">{this.props.status_str}</span>
-              ),
             props: {
               rowSpan: 0,
             },
@@ -588,68 +473,135 @@ class ListItemTable extends React.Component {
       },
     },
     {
+      title: '买家/收货人',
+      dataIndex: 'receiver_name',
+      width: '10%',
+      align: 'center',
+      render: (val, record, index) => {
+        const { outData, len } = this.props;
+        if (index == 0) {
+          return {
+            children: (
+              <Fragment>
+                <p>{outData.receiver_name}</p>
+                <p>{outData.receiver_tel}</p>
+              </Fragment>
+            ),
+            props: {
+              rowSpan: len,
+            },
+          };
+        } else {
+          return {
+            props: {
+              rowSpan: 0,
+            },
+          };
+        }
+      },
+    },
+    {
+      title: '实收金额',
+      dataIndex: 'receive',
+      width: '10%',
+      align: 'center',
+      render: (val, record, index) => {
+        const { outData, len } = this.props;
+        if (index == 0) {
+          return {
+            children: `￥${formatThousands(outData.payment)}`,
+            props: {
+              rowSpan: len,
+            },
+          };
+        }
+        return {
+          props: {
+            rowSpan: 0,
+          },
+        };
+      },
+    },
+    {
+      title: '订单状态',
+      dataIndex: 'status',
+      width: '10%',
+      align: 'center',
+      render: (val, record, index) => {
+        const { outData, len } = this.props;
+        if (index == 0) {
+          return {
+            children: <p className={this.status_str[outData.status]}>{outData.status_str}</p>,
+            props: {
+              rowSpan: len,
+            },
+          };
+        }
+        return {
+          children: <p></p>,
+          props: {
+            rowSpan: 0,
+          },
+        };
+      },
+    },
+    {
       title: '操作',
       dataIndex: 'options',
       width: '10%',
       align: 'center',
       render: (options, record, index) => {
+        const { outData, len } = this.props;
+        const { visible } = this.state;
+        const { getFieldDecorator } = this.props.form;
+
         if (index == 0) {
-          if (record.status_str == '待发货') {
+          if (outData.express_mode == '线下') {
             return {
-              children: (
-                <SendGoods
-                  id={this.props.id}
-                  onChange={this.handleSelect}
-                  yztoken={this.props.yztoken}
-                  selectedRowKeys={this.state.selectedRowKeys}
-                  tid={this.props.tid}
-                  data={this.props.data}
-                  receiver_tel={this.props.receiver_tel}
-                  receiver_name={this.props.receiver_name}
-                  address={this.props.address}
-                ></SendGoods>
-              ),
+              children:
+                outData.status_str == '待支付' ? (
+                  <Fragment>
+                    <Button type="primary" onClick={this.showPayModal}>
+                      结账
+                    </Button>
+                    <Modal title="结账" visible={visible} onCancel={this.handleCancel} onOk={() => this.handlePay(outData.tid)}>
+                      <Form>
+                        <FormItem label="实付金额">
+                          {getFieldDecorator('sal', {
+                            initialValue: outData.payment,
+                            rules: [{ required: true, message: '请填写实付金额' }],
+                          })(<Input placeholder="请输入实付金额" type="text"></Input>)}
+                        </FormItem>
+                      </Form>
+                    </Modal>
+                  </Fragment>
+                ) : (
+                  <p></p>
+                ),
               props: {
-                rowSpan: this.props.len,
+                rowSpan: len,
               },
             };
           } else {
-            return {
-              children: (
-                <SendGoods
-                  receiver_tel={this.props.receiver_tel}
-                  onChange={this.handleSelect}
-                  id={this.props.id}
-                  selectedRowKeys={this.state.selectedRowKeys}
-                  yztoken={this.props.yztoken}
-                  tid={this.props.tid}
-                  receiver_name={this.props.receiver_name}
-                  address={this.props.address}
-                  data={this.props.data}
-                  disabled
-                ></SendGoods>
-              ),
-              props: {
-                rowSpan: this.props.len,
-              },
-            };
+            if (outData.status_str == '待发货') {
+              return {
+                children: <SendGoods outData={outData} onChange={this.props.onChange} id={this.props.id}></SendGoods>,
+                props: {
+                  rowSpan: len,
+                },
+              };
+            } else {
+              return {
+                children: <p></p>,
+                props: {
+                  rowSpan: len,
+                },
+              };
+            }
           }
         }
         return {
-          children: (
-            <SendGoods
-              id={this.props.id}
-              yztoken={this.props.yztoken}
-              onChange={this.handleSelect}
-              selectedRowKeys={this.state.selectedRowKeys}
-              tid={this.props.tid}
-              receiver_tel={this.props.receiver_tel}
-              receiver_name={this.props.receiver_name}
-              address={this.props.address}
-              data={this.props.data}
-              disabled
-            ></SendGoods>
-          ),
+          children: <p></p>,
           props: {
             rowSpan: 0,
           },
@@ -658,18 +610,76 @@ class ListItemTable extends React.Component {
     },
   ];
 
+  showExpressModal = (outData, id) => {
+    request('/api/confirm_sel', {
+      method: 'post',
+      body: {
+        id: id,
+        tid: outData.tid,
+        delivery_order: outData.delivery_id,
+      },
+      headers: { 'Content-Type': 'application/json;' },
+    }).then((payload) => console.log(payload));
+    this.setState({
+      ExpressModal: true,
+    });
+  };
+
+  handleOk = (e) => {
+    console.log(e);
+    this.setState({
+      ExpressModal: false,
+    });
+  };
+
+  handleCancel = (e) => {
+    console.log(e);
+    this.setState({
+      ExpressModal: false,
+    });
+  };
+
+
   render() {
-    const { data, item, ...rest } = this.props;
+    const { data, item, outData, ...rest } = this.props;
 
     return (
       <div className={styles.listItem}>
         <div className={styles.listItemTitle}>
           <span>
-            订单号：{item.tid} 下单时间：{moment(item.created).format('YYYY-MM-DD')}
+            订单号：{outData.tid} 下单时间：{moment(outData.created).format('YYYY-MM-DD')}
           </span>
-          <Link to={`/onlineorder/${item.tid}`}>查看详情</Link>
+          <div>
+            {outData.express_mode == '线上' && (
+              <a className="textDelete" style={{ marginRight: 10 }} onClick={this.handleRefund(outData, this.props.id)}>
+                线上订单退款
+              </a>
+            )}
+            {outData.express_type == 0 && outData.status == 'WAIT_BUYER_CONFIRM_GOODS' && (
+              <a
+                style={{ marginRight: 10 }}
+                onClick={() => outData.delivery_id && this.showExpressModal(outData, this.props.id)}
+              >
+                快递轨迹查看
+              </a>
+            )}
+            <Link to={`/onlineorder/${outData.tid}`}>查看详情</Link>
+            <Modal
+              title="快递轨迹查看"
+              visible={this.state.ExpressModal}
+              onOk={this.handleOk}
+              onCancel={this.handleCancel}
+            ></Modal>
+          </div>
         </div>
-        <Table {...rest} pagination={false} columns={this.columns} rowKey="oid" dataSource={data} bordered></Table>
+        <Table
+          {...rest}
+          pagination={false}
+          rowKey={(record) => record.sku_id}
+          columns={this.columns}
+          dataSource={data}
+          bordered
+        ></Table>
       </div>
     );
   }
@@ -679,7 +689,7 @@ export default class App extends React.Component {
   render() {
     return (
       <div className={styles.onlineTable}>
-        <OrderList id={this.props.id} yztoken={this.props.yztoken}></OrderList>
+        <OrderList id={this.props.id}></OrderList>
       </div>
     );
   }

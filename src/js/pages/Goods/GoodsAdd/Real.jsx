@@ -142,7 +142,7 @@ class RictTextImages extends React.Component {
     request('/api/t_goods_image_select', {
       method: 'post',
       body: {
-        id: 2,
+        id: store.get('userId'),
       },
     }).then((payload) => this.setState({ imgList: payload.pageData }));
   };

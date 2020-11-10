@@ -15,7 +15,7 @@
   }
   .listHeader {
     position: sticky;
-    top: 0;
+    top: -24px;
     z-index: 10;
     display: flex;
     flex-wrap: nowrap;
@@ -23,9 +23,12 @@
     li {
       width: 10%;
       padding: 10px;
-      text-align: right;
+      text-align: center;
+      &.send{
+        width: 15%;
+      }
       &:first-child {
-        width: 40%;
+        width: 35%;
         text-align: left;
       }
     }
