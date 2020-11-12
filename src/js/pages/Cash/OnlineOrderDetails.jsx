@@ -38,11 +38,15 @@ class Refund extends React.Component {
             ...value,
           },
           headers: { 'Content-Type': 'application/json;' },
-        }).then((payload) => {
-          message.success('退货成功');
-          this.setState({ visible: false });
-          onChange && onChange();
-        });
+        })
+          .then((payload) => {
+            message.success('退货成功');
+            this.setState({ visible: false });
+            onChange && onChange();
+          })
+          .catch((err) => {
+            message.error(err.message);
+          });
       }
     });
   };
@@ -157,7 +161,11 @@ export default class App extends React.Component {
         id: this.props.id,
         tid: this.props.match.params.id,
       },
-    }).then((payload) => this.setState({ data: payload.pageData }));
+    })
+      .then((payload) => this.setState({ data: payload.pageData }))
+      .catch((err) => {
+        message.error(err.message);
+      });
   };
 
   componentDidMount() {

@@ -73,17 +73,14 @@ class FoodsInfo extends React.Component {
           <img src={data.pic_url}></img>
         </div>
         <div className={styles.foodAction}>
-          <div>
-            <p className={styles.price}>￥{data.price}</p>
-            <p className={styles.name}>{data.name}</p>
-          </div>
+          <p className={styles.price}>￥{data.price}</p>
           <Icon
             type="plus-circle"
             theme="filled"
             onClick={data.guige_key ? () => this.showModal(data.item_id) : () => this.handlePlus(data.item_id)}
           />
         </div>
-
+        <p className={styles.name}>{data.name}</p>
         <Modal title="选择规格" visible={visible} onOk={this.handleSkus} onCancel={this.handleCancel}>
           <Form>
             {skus &&

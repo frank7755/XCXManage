@@ -50,12 +50,16 @@ class ReturnGoods extends React.Component {
             ...values,
             ...this.props.record,
           },
-        }).then((payload) => {
-          this.setState({ visible: false });
-          message.success('退货成功');
-          this.props.form.resetFields();
-          onChange && onChange();
-        });
+        })
+          .then((payload) => {
+            this.setState({ visible: false });
+            message.success('退货成功');
+            this.props.form.resetFields();
+            onChange && onChange();
+          })
+          .catch((err) => {
+            message.error(err.message);
+          });
       } else {
         message.error('请填写必填项!');
         this.props.form.resetFields();
@@ -77,7 +81,11 @@ class ReturnGoods extends React.Component {
       ? request('/api/select_employess', {
           method: 'post',
           body: { id: id, name: value },
-        }).then((payload) => this.setState({ GuideSource: payload.pageData }))
+        })
+          .then((payload) => this.setState({ GuideSource: payload.pageData }))
+          .catch((err) => {
+            message.error(err.message);
+          })
       : [];
   };
 
@@ -222,7 +230,11 @@ class GoodsDetails extends React.Component {
         pur_no: this.props.orderNum,
         type: this.props.type,
       },
-    }).then((payload) => this.setState({ data: payload.pageData.skus }));
+    })
+      .then((payload) => this.setState({ data: payload.pageData.skus }))
+      .catch((err) => {
+        message.error(err.message);
+      });
   };
 
   showModal = () => {

@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import request from '~js/utils/request';
+import { store } from '~js/utils/utils';
 import moment from 'moment';
 import { formatThousands } from '~js/utils/utils';
 import styles from '~css/Cash/OnlineOrder.module.less';
@@ -17,15 +18,6 @@ import { Link } from 'react-router-dom';
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-const status = {
-  1: '买家发起维权',
-  10: '卖家拒绝退款',
-  20: '卖家已经同意退货，等待买家退货，',
-  30: '买家已经退货，等待卖家确认收货',
-  40: '卖家未收到货,拒绝退款',
-  50: '退款关闭',
-  60: '退款成功',
-};
 const FormItem = Form.Item;
 
 @Form.create()
@@ -362,10 +354,13 @@ class ListItemTable extends React.Component {
     WAIT_SELLER_SEND_GOODS: 'textEdit',
     WAIT_BUYER_CONFIRM_GOODS: 'textHighLight',
     TRADE_SUCCESS: 'textSuccess',
+    TRADE_REFUND: 'textHighlight',
     TRADE_CLOSED: 'textDelete',
   };
 
   handlePay = (tid) => {
+    const { onChange, data, outData } = this.props;
+
     this.props.form.validateFields((err, val) => {
       if (!err) {
         request('/api/catering/order_management_account', {
@@ -379,17 +374,40 @@ class ListItemTable extends React.Component {
         })
           .then((payload) => {
             message.success('结账成功');
+            onChange && onChange();
+            this.setState({ visible: false });
+            request('/api/catering/xprint', {
+              method: 'post',
+              body: {
+                id: this.props.id,
+                sn: store.get('sn'),
+                type: 4,
+                content: `
+<BR><BR><C><HB>${store.get('shopName')}
+
+<N>欢迎光临
+
+<L>桌位号：${outData.desk_no}
+品名      数量          单价
+--------------------------------
+${data
+  .map(
+    (item) => `
+${item.title}
+        ${item.count}           ￥${item.price}`
+  )
+  .join('')}
+--------------------------------
+日期：${moment().format('YYYY-MM-DD HH:mm:ss')}
+总计：${outData.payment}
+请保留您的小票，保护您的权益.<BR><BR>
+`,
+              },
+            }).catch((error) => message.error(error.message));
           })
           .catch((error) => message.error(error.message));
       }
     });
-  };
-
-  handleSelect = (val) => {
-    const { onChange } = this.props;
-
-    this.setState({ selectedRowKeys: val });
-    onChange && onChange();
   };
 
   showPayModal = () => {
@@ -654,7 +672,6 @@ class ListItemTable extends React.Component {
   };
 
   handleOk = (e) => {
-    console.log(e);
     this.setState({
       ExpressModal: false,
     });
