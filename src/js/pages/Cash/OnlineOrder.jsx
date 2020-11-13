@@ -256,6 +256,7 @@ class OrderList extends React.Component {
                     <Option value="WAIT_SELLER_SEND_GOODS">待发货</Option>
                     <Option value="WAIT_BUYER_CONFIRM_GOODS">已发货</Option>
                     <Option value="TRADE_SUCCESS">已完成</Option>
+                    <Option value="TRADE_REFUND">已退款</Option>
                     <Option value="TRADE_CLOSED">已关闭</Option>
                   </Select>
                 )}
@@ -354,7 +355,7 @@ class ListItemTable extends React.Component {
     WAIT_SELLER_SEND_GOODS: 'textEdit',
     WAIT_BUYER_CONFIRM_GOODS: 'textHighLight',
     TRADE_SUCCESS: 'textSuccess',
-    TRADE_REFUND: 'textSuccess',
+    TRADE_REFUND: 'textDelete',
     TRADE_CLOSED: 'textDelete',
   };
 
@@ -674,7 +675,7 @@ class ListItemTable extends React.Component {
       method: 'post',
       body: {
         id: this.props.id,
-        sn: store.get('sn'),
+        sn: store.get('printSN'),
         type: 4,
         content: `
 <BR><BR><C><HB>${store.get('shopName')}
