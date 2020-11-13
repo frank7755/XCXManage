@@ -78,7 +78,7 @@ class DragSortingTable extends React.Component {
   editRow = (val) => {
     this.setState({
       visible: true,
-      editId: val.tag_ids,
+      editId: val,
     });
   };
 
@@ -92,7 +92,7 @@ class DragSortingTable extends React.Component {
           body: {
             ...value,
             id: this.props.id,
-            tag_ids: editId,
+            tag_ids: editId.tag_ids,
             type: 2,
           },
         })
@@ -121,7 +121,7 @@ class DragSortingTable extends React.Component {
       method: 'post',
       body: {
         id: this.props.id,
-        tag_ids: val.tag_ids,
+        tag_ids: val,
       },
     })
       .then((payload) => {
@@ -139,13 +139,19 @@ class DragSortingTable extends React.Component {
     {
       title: '操作',
       dataIndex: 'action',
-      render: (record, val) => {
+      render: (val, record) => {
+        console.log(val, record);
         return (
           <Fragment>
-            <a className="textEdit" style={{ marginRight: 10 }} onClick={() => this.editRow(val)}>
+            <a className="textEdit" style={{ marginRight: 10 }} onClick={() => this.editRow(record)}>
               编辑
             </a>
-            <Popconfirm title="确定要删除分组吗?" onConfirm={() => this.confirm(val)} okText="确定" cancelText="取消">
+            <Popconfirm
+              title="确定要删除分组吗?"
+              onConfirm={() => this.confirm(record.tag_ids)}
+              okText="确定"
+              cancelText="取消"
+            >
               <a className="textDelete">删除</a>
             </Popconfirm>
           </Fragment>
@@ -179,6 +185,7 @@ class DragSortingTable extends React.Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
+    const { editId } = this.state;
 
     return (
       <DndProvider backend={HTML5Backend}>
@@ -198,6 +205,7 @@ class DragSortingTable extends React.Component {
           <Form>
             <FormItem label="分组名称">
               {getFieldDecorator('tag_name', {
+                initialValue: editId && editId.tag_name,
                 rules: [{ required: true, message: '分组名称' }],
               })(<Input type="text"></Input>)}
             </FormItem>

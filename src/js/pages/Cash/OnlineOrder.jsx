@@ -354,67 +354,15 @@ class ListItemTable extends React.Component {
     WAIT_SELLER_SEND_GOODS: 'textEdit',
     WAIT_BUYER_CONFIRM_GOODS: 'textHighLight',
     TRADE_SUCCESS: 'textSuccess',
-    TRADE_REFUND: 'textHighlight',
+    TRADE_REFUND: 'textSuccess',
     TRADE_CLOSED: 'textDelete',
-  };
-
-  handlePay = (tid) => {
-    const { onChange, data, outData } = this.props;
-
-    this.props.form.validateFields((err, val) => {
-      if (!err) {
-        request('/api/catering/order_management_account', {
-          method: 'post',
-          body: {
-            id: this.props.id,
-            tid: tid,
-            sal: val.sal,
-          },
-          headers: { 'Content-Type': 'application/json;' },
-        })
-          .then((payload) => {
-            message.success('结账成功');
-            onChange && onChange();
-            this.setState({ visible: false });
-            request('/api/catering/xprint', {
-              method: 'post',
-              body: {
-                id: this.props.id,
-                sn: store.get('sn'),
-                type: 4,
-                content: `
-<BR><BR><C><HB>${store.get('shopName')}
-
-<N>欢迎光临
-
-<L>桌位号：${outData.desk_no}
-品名      数量          单价
---------------------------------
-${data
-  .map(
-    (item) => `
-${item.title}
-        ${item.count}           ￥${item.price}`
-  )
-  .join('')}
---------------------------------
-日期：${moment().format('YYYY-MM-DD HH:mm:ss')}
-总计：${outData.payment}
-请保留您的小票，保护您的权益.<BR><BR>
-`,
-              },
-            }).catch((error) => message.error(error.message));
-          })
-          .catch((error) => message.error(error.message));
-      }
-    });
   };
 
   showPayModal = () => {
     this.setState({ visible: true });
   };
 
-  handleCancel = () => {
+  handlePayCancel = () => {
     this.setState({ visible: false });
   };
 
@@ -467,7 +415,7 @@ ${item.title}
       title: '配送方式/配送单号/桌号',
       dataIndex: 'express_type',
       width: '15%',
-      align: 'center',
+      align: 'left',
       render: (val, record, index) => {
         const { outData, len } = this.props;
         if (index == 0) {
@@ -584,7 +532,15 @@ ${item.title}
                     <Button type="primary" onClick={this.showPayModal}>
                       结账
                     </Button>
-                    <Modal title="结账" visible={visible} onCancel={this.handleCancel} onOk={() => this.handlePay(outData.tid)}>
+                    <Button type="gray" onClick={this.handlePrint} style={{ marginTop: 10 }}>
+                      打印小票
+                    </Button>
+                    <Modal
+                      title="结账"
+                      visible={visible}
+                      onCancel={this.handlePayCancel}
+                      onOk={() => this.handlePay(outData.tid)}
+                    >
                       <Form>
                         <FormItem label="实付金额">
                           {getFieldDecorator('sal', {
@@ -650,6 +606,8 @@ ${item.title}
   };
 
   handleRefundOk = (tid) => {
+    const { onChange } = this.props;
+
     this.props.form.validateFields((err, value) => {
       if (!err) {
         request('/api/secapi/pay/refund', {
@@ -662,9 +620,9 @@ ${item.title}
           headers: { 'Content-Type': 'application/json;' },
         })
           .then((payload) => {
+            onChange && onChange();
             message.success('退款成功');
             this.setState({ refundShow: false });
-            onChange && onChange();
           })
           .catch((error) => message.error(error.message));
       }
@@ -682,6 +640,64 @@ ${item.title}
       ExpressModal: false,
       refundShow: false,
     });
+  };
+
+  handlePay = (tid) => {
+    const { onChange } = this.props;
+    console.log(onChange);
+
+    this.props.form.validateFields((err, val) => {
+      if (!err) {
+        request('/api/catering/order_management_account', {
+          method: 'post',
+          body: {
+            id: this.props.id,
+            tid: tid,
+            sal: val.sal,
+          },
+          headers: { 'Content-Type': 'application/json;' },
+        })
+          .then((payload) => {
+            message.success('结账成功');
+            onChange && onChange();
+            this.setState({ visible: false });
+          })
+          .catch((error) => message.error(error.message));
+      }
+    });
+  };
+
+  handlePrint = () => {
+    const { data, outData } = this.props;
+
+    request('/api/catering/xprint', {
+      method: 'post',
+      body: {
+        id: this.props.id,
+        sn: store.get('sn'),
+        type: 4,
+        content: `
+<BR><BR><C><HB>${store.get('shopName')}
+
+<N>欢迎光临
+
+<L>桌位号：${outData.desk_no}
+品名      数量          单价
+--------------------------------
+${data
+  .map(
+    (item) => `
+${item.title}
+${item.count}           ￥${item.price}`
+  )
+  .join('')}
+--------------------------------
+日期：${moment().format('YYYY-MM-DD HH:mm:ss')}
+总计：${outData.payment}
+请保留您的小票，保护您的权益.<BR><BR>
+`,
+      },
+    }).catch((error) => message.error(error.message));
   };
 
   render() {

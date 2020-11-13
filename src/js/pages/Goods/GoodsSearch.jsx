@@ -266,41 +266,33 @@ class ChangeGroup extends React.Component {
   };
 
   showModal = () => {
-    request('/api/t_goods_fz_select', {
-      method: 'post',
-      body: {
-        shop_type: store.get(shopType),
-        id: store.get(userId),
-      },
-    }).then((payload) => {
-      this.setState({ data: payload.pageData, visible: true });
-    });
+    this.setState({ visible: true });
   };
 
   handleCancel = (e) => {
     this.setState({
       visible: false,
     });
-  };
-
-  getGroupData = (val) => {
-    this.setState({ groupData: val.toString() });
+    this.props.form.resetFields();
   };
 
   confirm = () => {
+    const { onChange } = this.props;
+
     this.props.form.validateFields((err, value) => {
+      console.log(value);
       if (!err) {
         request('/api/t_goods/update_term', {
           method: 'post',
           body: {
             id: this.props.id,
-            yz_token_info: this.props.yztoken,
             item_id: this.props.item_id,
             tag_ids: value.tag_ids[1],
           },
         })
           .then((paylaod) => {
             message.success('修改成功');
+            onChange && onChange();
             this.setState({ visible: false });
           })
           .catch((error) => message.error(error.message));
@@ -327,9 +319,8 @@ class ChangeGroup extends React.Component {
           <Form>
             <FormItem label="选择分组">
               {getFieldDecorator('tag_ids', {
-                initialValue: this.props.originVal ? this.props.originVal.split(',') : [],
                 rules: [{ required: true, message: '请选择分组' }],
-              })(<Cascader options={data} />)}
+              })(<Cascader expandTrigger="hover" options={this.props.groupData} />)}
             </FormItem>
           </Form>
         </Modal>
@@ -418,7 +409,8 @@ class GoodsTable extends React.Component {
               yztoken={this.props.yztoken}
               id={this.props.id}
               item_id={record.item_id}
-              originVal={record.tag_ids}
+              groupData={this.state.goodsSort}
+              onChange={this.refresh}
             ></ChangeGroup>
             {record.is_display == 1 ? (
               <a style={{ margin: '0 5px' }} onClick={() => this.handleOff(this.props.id, record.item_id)}>
@@ -586,7 +578,9 @@ class GoodsTable extends React.Component {
                   <Col span={8}>
                     <span className={styles.rowItem}>
                       <label>商品分组：</label>
-                      {getFieldDecorator('tag_ids')(<Cascader style={{ width: 'calc(100% - 80px)' }} options={goodsSort} />)}
+                      {getFieldDecorator('tag_ids')(
+                        <Cascader expandTrigger="hover" style={{ width: 'calc(100% - 80px)' }} options={goodsSort} />
+                      )}
                     </span>
                   </Col>
                 </Row>
@@ -611,6 +605,7 @@ class GoodsTable extends React.Component {
           rowKey={table.rowKey}
           columns={this.columns}
           onChange={table.onChange}
+          groupData={goodsSort}
           pagination={table.pagination}
           bodyStyle={{ overflowX: 'auto' }}
           dataSource={table.getDataSource()}
@@ -625,7 +620,7 @@ export default class App extends React.Component {
   render() {
     return (
       <div className={styles.goodManage}>
-        <GoodsTable source={`/api/t_goods/select`} id={this.props.id} yztoken={this.props.yztoken}></GoodsTable>
+        <GoodsTable source={`/api/t_goods/select`} id={this.props.id}></GoodsTable>
       </div>
     );
   }
