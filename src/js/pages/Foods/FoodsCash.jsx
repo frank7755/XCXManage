@@ -274,183 +274,6 @@ class ShoppingCart extends React.Component {
   }
 }
 
-// class CashModal extends React.Component {
-//   state = { visible: false, orderData: [] };
-
-//   showModal = () => {
-//     const { data } = this.props;
-//     const values = this.props.form.getFieldsValue();
-//     const newData = data
-//       .filter(({ item_id }) => values[`good_${item_id}`].checked)
-//       .map((item) => ({ ...item, count: values[`good_${item.item_id}`].count }));
-
-//     this.setState({
-//       visible: true,
-//       orderData: newData,
-//     });
-//   };
-
-//   handleCancel = (e) => {
-//     this.setState({
-//       visible: false,
-//     });
-//   };
-
-//   handleAdd = () => {
-//     this.props.form.validateFields((err, values) => {
-//       const { data } = this.props;
-//       const newData = data
-//         .filter(({ item_id }) => values[`good_${item_id}`].checked)
-//         .map((item) => ({ ...item, count: values[`good_${item.item_id}`].count }));
-
-//       if (!err) {
-//         request('/api/catering/xprint', {
-//           method: 'post',
-//           body: {
-//             id: this.props.id,
-//             sn: store.get('printSN'),
-//             type: 4,
-//             content: `
-// <BR><BR><C><HB>${store.get('shopName')}
-
-// <N>欢迎光临
-
-// <L>桌位号：${values.desk_no}
-// 品名      数量          单价
-// --------------------------------
-// ${newData
-//   .map(
-//     (item) => `
-// ${item.name}
-//            ${item.count}           ￥${item.price}`
-//   )
-//   .join('')}
-// --------------------------------
-// 日期：${moment().format('YYYY-MM-DD HH:mm:ss')}
-// 请保留您的小票，保护您的权益.<BR><BR>
-// `,
-//           },
-//         }).catch((error) => message.error(error.message));
-
-//         request('/api/catering/order_management_addcreate', {
-//           method: 'post',
-//           headers: { 'Content-Type': 'application/json;' },
-//           body: { id: this.props.id, desk_no: values.desk_no, skus: newData },
-//         })
-//           .then((payload) => {
-//             message.success('加单成功!');
-//             this.props.form.resetFields();
-//           })
-//           .catch((error) => message.error(error.message));
-
-//         this.setState({
-//           visible: false,
-//         });
-//       }
-//     });
-//   };
-
-//   handleCash = () => {
-//     this.props.form.validateFields((err, values) => {
-//       const { data } = this.props;
-//       const newData = data
-//         .filter(({ item_id }) => values[`good_${item_id}`].checked)
-//         .map((item) => ({ ...item, count: values[`good_${item.item_id}`].count }));
-
-//       if (!err) {
-//         request('/api/catering/xprint', {
-//           method: 'post',
-//           body: {
-//             id: this.props.id,
-//             sn: store.get('printSN'),
-//             type: 4,
-//             content: `
-// <BR><BR><C><HB>${store.get('shopName')}
-
-// <N>欢迎光临
-
-// <L>桌位号：${values.desk_no}
-// 品名      数量          单价
-// --------------------------------
-// ${newData
-//   .map(
-//     (item) => `
-// ${item.name}
-//            ${item.count}          ￥${item.price}`
-//   )
-//   .join('')}
-// --------------------------------
-// 日期：${moment().format('YYYY-MM-DD HH:mm:ss')}
-// 请保留您的小票，保护您的权益.<BR><BR>
-// `,
-//           },
-//         }).catch((error) => message.error(error.message));
-
-//         request('/api/catering/order_management_create', {
-//           method: 'post',
-//           headers: { 'Content-Type': 'application/json;' },
-//           body: { id: this.props.id, desk_no: values.desk_no, skus: newData },
-//         })
-//           .then((payload) => {
-//             message.success('下单成功!');
-//             this.props.form.resetFields();
-//           })
-//           .catch((error) => message.error(error.message));
-
-//         this.setState({
-//           visible: false,
-//         });
-//       }
-//     });
-//   };
-
-//   render() {
-//     const { visible, orderData } = this.state;
-//     const { form, type, disabled } = this.props;
-//     const { getFieldDecorator } = form;
-
-//     return (
-//       <Fragment>
-//         {type == 'add' ? (
-//           <Button type="success" onClick={this.showModal} disabled={disabled}>
-//             加单
-//           </Button>
-//         ) : (
-//           <Button type="primary" onClick={this.showModal} disabled={disabled}>
-//             下单
-//           </Button>
-//         )}
-//         <Modal
-//           title={type == 'add' ? '确认加单' : '确认下单'}
-//           visible={visible}
-//           onOk={type == 'add' ? this.handleAdd : this.handleCash}
-//           onCancel={this.handleCancel}
-//         >
-//           <Form>
-//             <div className={styles.orderedListTitle}>
-//               <span>菜名</span>
-//               <span>数量</span>
-//               <span>单价</span>
-//             </div>
-//             {orderData.map((item) => (
-//               <p key={item.item_id} className={styles.orderedList}>
-//                 <span>{item.name}</span>
-//                 <span>{item.count}</span>
-//                 <span>￥{item.price}</span>
-//               </p>
-//             ))}
-//             <FormItem label="座位号">
-//               {getFieldDecorator('desk_no', {
-//                 rules: [{ required: true, message: '请输入座位号!' }],
-//               })(<Input type="text" placeholder="请输入座位号"></Input>)}
-//             </FormItem>
-//           </Form>
-//         </Modal>
-//       </Fragment>
-//     );
-//   }
-// }
-
 @Form.create()
 export default class App extends React.Component {
   state = {
@@ -497,7 +320,6 @@ export default class App extends React.Component {
   };
 
   handleCartData = (val) => {
-    console.log(val);
     let price = 0;
     val.forEach((item) => {
       price += item.count * item.price;
@@ -509,34 +331,6 @@ export default class App extends React.Component {
     const { chosenData } = this.state;
 
     if (type == 0) {
-      request('/api/catering/xprint', {
-        method: 'post',
-        body: {
-          id: this.props.id,
-          sn: store.get('printSN'),
-          type: 4,
-          content: `
-<BR><BR><C><HB>${store.get('shopName')}
-
-<N>欢迎光临
-
-<L>桌位号：${val.desk_no}
-品名      数量          单价
---------------------------------
-${chosenData
-  .map(
-    (item) => `
-${item.title}
-         ${item.count}           ￥${item.price}`
-  )
-  .join('')}
---------------------------------
-日期：${moment().format('YYYY-MM-DD HH:mm:ss')}
-请保留您的小票，保护您的权益.<BR><BR>
-`,
-        },
-      }).catch((error) => message.error(error.message));
-
       request('/api/catering/order_management_create', {
         method: 'post',
         headers: { 'Content-Type': 'application/json;' },
@@ -550,10 +344,50 @@ ${item.title}
       })
         .then((payload) => {
           message.success('下单成功');
+          request('/api/catering/xprint', {
+            method: 'post',
+            body: {
+              id: this.props.id,
+              sn: store.get('printSN'),
+              type: 4,
+              content: `
+<BR><BR><C><HB>${store.get('shopName')}
+
+<N>欢迎光临
+
+<L>桌位号：${val.desk_no}
+品名      数量          单价
+--------------------------------
+${chosenData
+  .map(
+    (item) => `
+${item.title}
+          ${item.count}           ￥${item.price}`
+  )
+  .join('')}
+--------------------------------
+日期：${moment().format('YYYY-MM-DD HH:mm:ss')}
+请保留您的小票，保护您的权益.<BR><BR>
+`,
+            },
+          }).catch((error) => message.error(error.message));
           this.setState({ chosenData: [], sumPrice: 0 });
         })
         .catch((err) => message.error(err.message));
     } else {
+      request('/api/catering/order_management_addcreate', {
+        method: 'post',
+        headers: { 'Content-Type': 'application/json;' },
+        body: {
+          id: store.get('userId'),
+          staff_id: val.staff_id,
+          vip_id: val.vip_id,
+          desk_no: val.desk_no,
+          skus: chosenData,
+        },
+      })
+        .then((payload) => {
+          message.success('加单成功');
       request('/api/catering/xprint', {
         method: 'post',
         body: {
@@ -572,7 +406,7 @@ ${chosenData
   .map(
     (item) => `
 ${item.title}
-         ${item.count}           ￥${item.price}`
+          ${item.count}           ￥${item.price}`
   )
   .join('')}
 --------------------------------
@@ -581,19 +415,6 @@ ${item.title}
 `,
         },
       }).catch((error) => message.error(error.message));
-      request('/api/catering/order_management_addcreate', {
-        method: 'post',
-        headers: { 'Content-Type': 'application/json;' },
-        body: {
-          id: store.get('userId'),
-          staff_id: val.staff_id,
-          vip_id: val.vip_id,
-          desk_no: val.desk_no,
-          skus: chosenData,
-        },
-      })
-        .then((payload) => {
-          message.success('加单成功');
           this.setState({ chosenData: [], sumPrice: 0 });
         })
         .catch((err) => message.error(err.message));

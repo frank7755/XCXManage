@@ -440,7 +440,6 @@ class EditableTable extends React.Component {
           ? (Number(sumPay) + Number(item.newPrice_num)).toFixed(2)
           : (Number(sumPay) + Number(item.price_num)).toFixed(2);
       });
-
     return (
       <EditableContext.Provider value={this.props.form}>
         <h2 className="title">
@@ -463,7 +462,6 @@ class EditableTable extends React.Component {
             sumAmount={sumAmount}
             sumCount={sumCount}
             sumPay={sumPay}
-            yztoken={this.props.yztoken}
             data={data}
             onChange={this.resetTable}
           ></PayDrawer>
@@ -668,13 +666,16 @@ class PayDrawer extends React.Component {
         title="结账"
         filter={(data) => ({
           id: this.props.id,
-          yz_token_info: this.props.yztoken,
           ...data,
         })}
         afterVisibleChange={this.resetData}
         data={{ skus: this.props.data }}
         onSubmit={this.resetOutTable}
-        trigger={<Button type="primary">结账</Button>}
+        trigger={
+          <Button type="primary" disabled={this.props.data.length <= 0}>
+            结账
+          </Button>
+        }
         headers={{ 'Content-Type': 'application/json' }}
       >
         {({ form }) => {
@@ -739,14 +740,6 @@ class PayDrawer extends React.Component {
                 </FormItem>
               </section>
               <section>
-                <FormItem label="订单内商品数量">
-                  {getFieldDecorator('pur_num', {
-                    initialValue: sumCount,
-                    rules: [{ required: true }],
-                  })(<Input disabled></Input>)}
-                </FormItem>
-              </section>
-              <section>
                 <FormItem label="支付方式">
                   {getFieldDecorator('pay_type', {
                     rules: [{ required: true, message: '请选择支付方式' }],
@@ -789,7 +782,7 @@ class PayDrawer extends React.Component {
                 )}
               </FormItem>
               <FormItem label="优惠价格">
-                {getFieldDecorator('sal', {
+                {getFieldDecorator('d_sal', {
                   initialValue:
                     value == 0 ? parseFloat(sumPay * userSettingDiscount).toFixed(2) : parseFloat(sumPay * value).toFixed(2),
                   rules: [{ required: true, message: '请输入最终优惠价格' }],

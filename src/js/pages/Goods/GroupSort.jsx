@@ -140,7 +140,6 @@ class DragSortingTable extends React.Component {
       title: '操作',
       dataIndex: 'action',
       render: (val, record) => {
-        console.log(val, record);
         return (
           <Fragment>
             <a className="textEdit" style={{ marginRight: 10 }} onClick={() => this.editRow(record)}>

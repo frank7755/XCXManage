@@ -16,6 +16,9 @@ export default {
     layout: false,
     component: loadable(() => import('~js/pages/Forget.jsx')),
   },
+  '/cashcenter': {
+    component: loadable(() => import('~js/pages/Cash/CashCenter.jsx')), //收银中心
+  },
   '/foodsCash': {
     component: loadable(() => import('~js/pages/Foods/FoodsCash.jsx')), //收银中心
   },
@@ -27,6 +30,12 @@ export default {
   },
   '/onlineorder/action/:id': {
     component: loadable(() => import('~js/pages/Cash/OrderAction.jsx')), //订单维权查看
+  },
+  '/onlineorderretail': {
+    component: loadable(() => import('~js/pages/Cash/OnlineOrderRetail.jsx')), //线上订单查询
+  },
+  '/onlineorderretail/:id': {
+    component: loadable(() => import('~js/pages/Cash/OnlineOrderRetailDetails.jsx')), //订单详情查看
   },
   '/sourcecenter': {
     component: loadable(() => import('~js/pages/Upload/Index.jsx')), //素材中心

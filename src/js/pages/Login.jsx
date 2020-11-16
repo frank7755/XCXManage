@@ -8,7 +8,16 @@ import { Link } from 'react-router-dom';
 import Md5 from '~js/utils/md5.js';
 
 const { Option } = Select;
-
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 6 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 18 },
+  },
+};
 @Form.create()
 class RegisterForm extends React.Component {
   state = {
@@ -75,8 +84,8 @@ class RegisterForm extends React.Component {
     return (
       <div className={styles.registerFormBox}>
         <h2>帐号注册</h2>
-        <Form onSubmit={this.handleSubmit} className={styles.loginForm}>
-          <Form.Item>
+        <Form {...formItemLayout} onSubmit={this.handleSubmit} className={styles.loginForm}>
+          <Form.Item label="手机号">
             {getFieldDecorator('telnumber', {
               rules: [
                 { required: true, message: '请输入手机号' },
@@ -93,7 +102,7 @@ class RegisterForm extends React.Component {
               />
             )}
           </Form.Item>
-          <Form.Item>
+          <Form.Item label="密码">
             {getFieldDecorator('pwd', {
               rules: [{ required: true, message: '请输入密码' }],
             })(
@@ -105,23 +114,23 @@ class RegisterForm extends React.Component {
               />
             )}
           </Form.Item>
-          <Form.Item>
+          <Form.Item label="姓名">
             {getFieldDecorator('user_name', {
               rules: [{ required: true, message: '请输入姓名' }],
             })(
               <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} type="text" placeholder="请输入姓名" />
             )}
           </Form.Item>
-          <Form.Item>
+          <Form.Item label="验证码">
             <div className={styles.message}>
               {getFieldDecorator('code', {
-                rules: [{ required: true, message: '请输入短信验证码' }],
+                rules: [{ required: true, message: '请输入验证码' }],
               })(
                 <Input
                   className={styles.captchaInput}
                   prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />}
                   type="text"
-                  placeholder="请输入短信验证码"
+                  placeholder="请输入验证码"
                 />
               )}
               <Button type="primary" onClick={this.handleMessage} disabled={this.state.disabled}>
@@ -129,7 +138,7 @@ class RegisterForm extends React.Component {
               </Button>
             </div>
           </Form.Item>
-          <Form.Item>
+          <Form.Item label="店铺名称">
             {getFieldDecorator('shop_name', {
               rules: [{ required: true, message: '请输入店铺名称' }],
             })(
@@ -138,6 +147,16 @@ class RegisterForm extends React.Component {
                 type="text"
                 placeholder="请输入店铺名称"
               />
+            )}
+          </Form.Item>
+          <Form.Item label="店铺类型">
+            {getFieldDecorator('shop_type', {
+              rules: [{ required: true, message: '请选择店铺类型' }],
+            })(
+              <Select placeholder="请选择店铺类型">
+                <Option value={1}>零售</Option>
+                <Option value={2}>餐饮</Option>
+              </Select>
             )}
           </Form.Item>
           {/* <Form.Item>
@@ -174,7 +193,6 @@ class RegisterForm extends React.Component {
 const storeAccount = 'loginName';
 const storeAccountState = 'loginRememberState';
 const storeToken = 'userToken';
-const storeYzToken = 'YZtoken';
 const userId = 'userId';
 const name = 'userName';
 const shopName = 'shopName';
@@ -192,7 +210,6 @@ export default class App extends React.Component {
 
   componentDidMount() {
     store.remove(storeToken);
-    store.remove(storeYzToken);
     store.remove(userId);
     store.remove(tel);
     store.remove(shopName);
@@ -232,7 +249,6 @@ export default class App extends React.Component {
             const { history } = this.props;
 
             store.set(storeToken, payload.token_info);
-            store.set(storeYzToken, payload.yz_token_info);
             store.set(userId, payload.id);
             store.set(tel, payload.telnumber);
             store.set(shopName, payload.shop_name);

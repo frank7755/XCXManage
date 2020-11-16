@@ -3,13 +3,12 @@ import request from '~js/utils/request';
 import { message, Layout, Menu, Icon, Dropdown, Avatar, Modal, Form, Input, Button } from 'antd';
 import { Link } from 'react-router-dom';
 import { store } from '~js/utils/utils';
-import defaultMenu from '~js/pages/menu.js';
+import menuFunction from '~js/pages/menu.js';
 import { withRouter } from 'react-router-dom';
 import styles from './Index.module.less';
 import Md5 from '~js/utils/md5.js';
 
 const storeToken = 'userToken';
-const storeYzToken = 'YZtoken';
 const userId = 'userId';
 const name = 'userName';
 const tel = 'telnumber';
@@ -17,6 +16,8 @@ const shopName = 'shopName';
 const role = 'userRole';
 const shopType = 'shopType';
 const FormItem = Form.Item;
+
+const defaultMenu = menuFunction(store.get(shopType));
 
 @Form.create()
 class ChangePassword extends React.Component {
@@ -111,7 +112,7 @@ class ChangePassword extends React.Component {
 class App extends React.Component {
   state = {
     draw: false,
-    openKeys: ['8'],
+    openKeys: [8],
     menu: '',
   };
 
@@ -120,7 +121,6 @@ class App extends React.Component {
   };
 
   componentDidMount() {
-
     if (defaultMenu.filter(({ children }) => children.some(({ src }) => this.props.location.pathname == src)).length > 0) {
       this.setState({
         openKeys: [
@@ -135,7 +135,6 @@ class App extends React.Component {
   handleLogout = () => {
     request('/api/login_out').then(this.props.history.push('/login'));
     store.remove(storeToken);
-    store.remove(storeYzToken);
     store.remove(userId);
     store.remove(name);
     store.remove(shopName);
@@ -161,12 +160,6 @@ class App extends React.Component {
       0
     );
   }
-
-  handleSwap = () => {
-    const { history } = this.props;
-
-    history.push('/shop');
-  };
 
   render() {
     const { SubMenu } = Menu;
@@ -251,9 +244,7 @@ class App extends React.Component {
         </Sider>
         <Layout style={{ marginLeft: 200 }}>
           <Header className={styles.header}>
-            <h2>
-              {store.get(shopName)}
-            </h2>
+            <h2>{store.get(shopName)}</h2>
             <ul>
               <Dropdown overlay={wechatOverLay} placement="bottomRight">
                 <li>
@@ -282,7 +273,7 @@ class App extends React.Component {
               store.get(name),
               store.get(tel),
               store.get(storeToken),
-              store.get(storeYzToken)
+              store.get(shopType)
             )}
           </Content>
         </Layout>

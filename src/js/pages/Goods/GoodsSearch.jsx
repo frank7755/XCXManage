@@ -280,7 +280,6 @@ class ChangeGroup extends React.Component {
     const { onChange } = this.props;
 
     this.props.form.validateFields((err, value) => {
-      console.log(value);
       if (!err) {
         request('/api/t_goods/update_term', {
           method: 'post',

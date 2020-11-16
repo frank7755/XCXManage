@@ -186,7 +186,7 @@ class OrderList extends React.Component {
       const [start_time, end_time] = value.dateRange;
 
       if (!err) {
-        request('/api/catering/order_management_select', {
+        request('/api/order_management/select', {
           method: 'post',
           body: {
             id: this.props.id,
@@ -264,12 +264,6 @@ class OrderList extends React.Component {
             </Col>
             <Col span={8}>
               <span className={styles.rowItem}>
-                <label>桌号：</label>
-                {getFieldDecorator('desk_no')(<Input placeholder="请输入桌号" style={{ width: 'calc(100% - 80px)' }} />)}
-              </span>
-            </Col>
-            <Col span={8}>
-              <span className={styles.rowItem}>
                 <label>配送单号：</label>
                 {getFieldDecorator('delivery_id')(
                   <Input placeholder="请输入配送单号" style={{ width: 'calc(100% - 80px)' }} />
@@ -294,7 +288,7 @@ class OrderList extends React.Component {
           <ul className={styles.listHeader}>
             <li>商品</li>
             <li>单价(元) / 数量</li>
-            <li className={styles.send}>配送方式/配送单号/桌号</li>
+            <li className={styles.send}>配送方式/配送单号</li>
             <li>买家 / 收货人</li>
             <li>实收金额(元)</li>
             <li>订单状态</li>
@@ -363,10 +357,6 @@ class ListItemTable extends React.Component {
     this.setState({ visible: true });
   };
 
-  handlePayCancel = () => {
-    this.setState({ visible: false });
-  };
-
   renderContent = (val, record, index) => {
     if (index == 0) {
       return {
@@ -413,7 +403,7 @@ class ListItemTable extends React.Component {
       },
     },
     {
-      title: '配送方式/配送单号/桌号',
+      title: '配送方式/配送单号',
       dataIndex: 'express_type',
       width: '15%',
       align: 'left',
@@ -425,7 +415,6 @@ class ListItemTable extends React.Component {
               <Fragment>
                 <p>配送方式：{this.expressType[outData.express_type]}</p>
                 <p>配送单号：{outData.delivery_id}</p>
-                <p>桌号：{outData.desk_no}</p>
               </Fragment>
             ),
             props: {
@@ -521,40 +510,11 @@ class ListItemTable extends React.Component {
       align: 'center',
       render: (options, record, index) => {
         const { outData, len } = this.props;
-        const { visible } = this.state;
-        const { getFieldDecorator } = this.props.form;
 
         if (index == 0) {
           if (outData.express_mode == '线下') {
             return {
-              children:
-                outData.status_str == '待支付' ? (
-                  <Fragment>
-                    <Button type="primary" onClick={this.showPayModal}>
-                      结账
-                    </Button>
-                    <Button type="gray" onClick={this.handlePrint} style={{ marginTop: 10 }}>
-                      打印小票
-                    </Button>
-                    <Modal
-                      title="结账"
-                      visible={visible}
-                      onCancel={this.handlePayCancel}
-                      onOk={() => this.handlePay(outData.tid)}
-                    >
-                      <Form>
-                        <FormItem label="实付金额">
-                          {getFieldDecorator('sal', {
-                            initialValue: outData.payment,
-                            rules: [{ required: true, message: '请填写实付金额' }],
-                          })(<Input placeholder="请输入实付金额" type="text"></Input>)}
-                        </FormItem>
-                      </Form>
-                    </Modal>
-                  </Fragment>
-                ) : (
-                  <p></p>
-                ),
+              children: '',
               props: {
                 rowSpan: len,
               },
@@ -643,29 +603,6 @@ class ListItemTable extends React.Component {
     });
   };
 
-  handlePay = (tid) => {
-    const { onChange } = this.props;
-
-    this.props.form.validateFields((err, val) => {
-      if (!err) {
-        request('/api/catering/order_management_account', {
-          method: 'post',
-          body: {
-            id: this.props.id,
-            tid: tid,
-            sal: val.sal,
-          },
-          headers: { 'Content-Type': 'application/json;' },
-        })
-          .then((payload) => {
-            message.success('结账成功');
-            onChange && onChange();
-            this.setState({ visible: false });
-          })
-          .catch((error) => message.error(error.message));
-      }
-    });
-  };
 
   handlePrint = () => {
     const { data, outData } = this.props;
@@ -763,7 +700,7 @@ ${item.title}
                 快递轨迹查看
               </a>
             )}
-            <Link to={`/onlineorder/${outData.tid}`}>查看详情</Link>
+            <Link to={`/onlineorderretail/${outData.tid}`}>查看详情</Link>
             <Modal title="快递轨迹查看" visible={this.state.ExpressModal} onOk={this.handleOk} onCancel={this.handleCancel}>
               {expressData &&
                 expressData.map((item) => (
