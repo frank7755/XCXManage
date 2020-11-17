@@ -154,8 +154,8 @@ class RegisterForm extends React.Component {
               rules: [{ required: true, message: '请选择店铺类型' }],
             })(
               <Select placeholder="请选择店铺类型">
-                <Option value={1}>零售</Option>
-                <Option value={2}>餐饮</Option>
+                <Option value={1}>服务行业</Option>
+                <Option value={2}>零售行业</Option>
               </Select>
             )}
           </Form.Item>

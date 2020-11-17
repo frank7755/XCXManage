@@ -12,6 +12,7 @@ class FoodsInfo extends React.Component {
   state = {
     visible: false,
     clickSkuData: [],
+    price: 0,
   };
 
   handlePlus = (val) => {
@@ -25,7 +26,6 @@ class FoodsInfo extends React.Component {
     }).then((payload) =>
       this.setState({ clickSkuData: payload.pageData[0] }, () => {
         const { onChange } = this.props;
-        this.setState({ initialValue: ++this.state.initialValue });
         onChange && onChange({ ...this.state.clickSkuData, count: 1 });
       })
     );
@@ -39,7 +39,16 @@ class FoodsInfo extends React.Component {
         id: store.get('userId'),
         item_id: val,
       },
-    }).then((payload) => this.setState({ clickSkuData: payload.pageData, visible: true }));
+    }).then((payload) => {
+
+      this.setState({ clickSkuData: payload.pageData, visible: true, price: payload.pageData[0].price });
+    });
+  };
+  handleChange = () => {
+    const { clickSkuData } = this.state;
+    const changeValue = this.props.form.getFieldsValue()['Operation_type'].toString().replace(/\,/g, '');
+    const checkedVal = clickSkuData.filter((item) => item.guige_tmp_con == changeValue)[0];
+    this.setState({ price: checkedVal.price });
   };
 
   handleCancel = () => {
@@ -55,7 +64,7 @@ class FoodsInfo extends React.Component {
         const guige = values.Operation_type.toString().replace(/\,/g, '');
         const chosenItem = { ...clickSkuData.filter((item) => item.guige_tmp_con == guige)[0], count: 1 };
         onChange && onChange(chosenItem);
-        this.setState({ visible: false, initialValue: ++this.state.initialValue });
+        this.setState({ visible: false, price: 0 });
         this.props.form.resetFields();
       }
     });
@@ -63,7 +72,7 @@ class FoodsInfo extends React.Component {
 
   render() {
     const { data } = this.props;
-    const { visible } = this.state;
+    const { visible, price } = this.state;
     const { getFieldDecorator } = this.props.form;
     const skus = JSON.parse(data.guige_value);
 
@@ -82,11 +91,14 @@ class FoodsInfo extends React.Component {
         </div>
         <p className={styles.name}>{data.name}</p>
         <Modal title="选择规格" visible={visible} onOk={this.handleSkus} onCancel={this.handleCancel}>
-          <Form>
+          <p className={styles.skuPrice}>
+            价格：<span className="textDelete">￥{price}</span>
+          </p>
+          <Form onChange={this.handleChange}>
             {skus &&
               skus.map((item, index) => (
                 <FormItem key={item.name} label={item.name}>
-                  {getFieldDecorator(`Operation_type.${index}`, {
+                  {getFieldDecorator(`Operation_type[${index}]`, {
                     rules: [{ required: true }],
                     initialValue: item.value.split(',')[0],
                   })(
@@ -221,7 +233,7 @@ class ShoppingCart extends React.Component {
                     规格:{item.guige_tmp_con ? item.guige_tmp_con : '无规格'} 库存:{item.quantity}
                   </p>
                 </div>
-                <span>{item.price}</span>
+                <span>￥{item.price}</span>
                 <div className={styles.action}>
                   <Icon type="minus-circle" theme="filled" onClick={() => this.handleMinus(item.sku_id)} />
                   <span className={styles.count}>{item.count}</span>
@@ -388,13 +400,13 @@ ${item.title}
       })
         .then((payload) => {
           message.success('加单成功');
-      request('/api/catering/xprint', {
-        method: 'post',
-        body: {
-          id: this.props.id,
-          sn: store.get('printSN'),
-          type: 4,
-          content: `
+          request('/api/catering/xprint', {
+            method: 'post',
+            body: {
+              id: this.props.id,
+              sn: store.get('printSN'),
+              type: 4,
+              content: `
 <BR><BR><C><HB>${store.get('shopName')}
 
 <N>欢迎光临
@@ -413,8 +425,8 @@ ${item.title}
 日期：${moment().format('YYYY-MM-DD HH:mm:ss')}
 请保留您的小票，保护您的权益.<BR><BR>
 `,
-        },
-      }).catch((error) => message.error(error.message));
+            },
+          }).catch((error) => message.error(error.message));
           this.setState({ chosenData: [], sumPrice: 0 });
         })
         .catch((err) => message.error(err.message));

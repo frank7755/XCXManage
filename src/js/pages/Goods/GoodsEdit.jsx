@@ -150,7 +150,7 @@ class RictTextImages extends React.Component {
     request('/api/t_goods_image_select', {
       method: 'post',
       body: {
-        id: 2,
+        id: this.props.id,
       },
     }).then((payload) => this.setState({ imgList: payload.pageData }));
   };
@@ -344,7 +344,7 @@ export default class App extends React.Component {
       {
         key: 'antd-uploader',
         type: 'component',
-        component: <RictTextImages onChange={(val) => this.handleImageChange(val)}></RictTextImages>,
+        component: <RictTextImages id={this.props.id} onChange={(val) => this.handleImageChange(val)}></RictTextImages>,
       },
     ];
 

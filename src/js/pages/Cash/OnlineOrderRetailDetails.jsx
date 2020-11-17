@@ -66,7 +66,7 @@ class Refund extends React.Component {
   getRefundFee = (e) => {
     const { data } = this.props;
 
-    this.props.form.setFieldsValue({ refund_fee: e * data.price });
+    this.props.form.setFieldsValue({ refund_fee: Number((e / data.num) * data.payment).toFixed(2) });
   };
 
   render() {
@@ -79,7 +79,7 @@ class Refund extends React.Component {
         <Button disabled={this.props.disabled} onClick={this.showModal}>
           线下退货
         </Button>
-        <Modal title="线下退货" visible={visible} onCancel={this.handleCancel} onOk={this.handleRefund}>
+        <Modal title="线下退货" maskClosable={false} visible={visible} onCancel={this.handleCancel} onOk={this.handleRefund}>
           <Form>
             <FormItem label="退货数量">
               {getFieldDecorator('count', {
@@ -94,7 +94,7 @@ class Refund extends React.Component {
             </FormItem>
             <FormItem label="退货金额">
               {getFieldDecorator('refund_fee', {
-                initialValue: data && data.price,
+                initialValue: data && data.payment,
                 rules: [
                   {
                     required: true,
@@ -135,6 +135,9 @@ class GoodsTable extends React.Component {
     {
       title: '小计',
       dataIndex: 'payment',
+      render(payment) {
+        return `￥${payment}`;
+      },
     },
     {
       title: '运单号',

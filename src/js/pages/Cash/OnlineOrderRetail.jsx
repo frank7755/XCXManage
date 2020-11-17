@@ -347,9 +347,10 @@ class ListItemTable extends React.Component {
   status_str = {
     WAIT_BUYER_PAY: 'textEdit',
     WAIT_SELLER_SEND_GOODS: 'textEdit',
-    WAIT_BUYER_CONFIRM_GOODS: 'textHighLight',
+    WAIT_BUYER_CONFIRM_GOODS: 'textSuccess',
     TRADE_SUCCESS: 'textSuccess',
-    TRADE_REFUND: 'textDelete',
+    TRADE_REFUNDING : 'textEdit',
+    TRADE_REFUNDED: 'textDelete',
     TRADE_CLOSED: 'textDelete',
   };
 
@@ -602,7 +603,6 @@ class ListItemTable extends React.Component {
       refundShow: false,
     });
   };
-
 
   handlePrint = () => {
     const { data, outData } = this.props;
