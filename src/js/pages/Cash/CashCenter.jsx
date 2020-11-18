@@ -1,8 +1,9 @@
 import React, { Fragment } from 'react';
 import request from '~js/utils/request';
-import serveTable from '~js/components/serveTable';
 import { formatThousands, debounce } from '~js/utils/utils';
+import { store } from '~js/utils/utils';
 import FormDrawer from '~js/components/FormDrawer';
+import moment from 'moment';
 import styles from '~css/Cash/CashCenter.module.less';
 import {
   Input,
@@ -648,10 +649,40 @@ class PayDrawer extends React.Component {
     this.setState({ staff_id: '', staff_name: '', vip_id: '', value: 1, userSettingDiscount: 1 });
   };
 
-  resetOutTable = () => {
-    const { onChange } = this.props;
+  resetOutTable = (payload, props) => {
+    const { onChange, data } = this.props;
+    const pay = props.form.getFieldValue('d_sal');
+    const shouldPay = props.form.getFieldValue('pur_sal');
 
     message.success('结账成功');
+    request('/api/catering/xprint', {
+      method: 'post',
+      body: {
+        id: this.props.id,
+        sn: store.get('printSN'),
+        type: 4,
+        content: `
+<BR><BR><C><HB>${store.get('shopName')}
+
+<N>欢迎光临
+
+品名      数量          单价
+--------------------------------
+${data
+  .map(
+    (item) => `
+${item.name}
+         ${item.count}          ￥${item.price}`
+  )
+  .join('')}
+--------------------------------
+日期：${moment().format('YYYY-MM-DD HH:mm:ss')}
+应付金额：${shouldPay}
+实付金额：${pay}
+请保留您的小票，保护您的权益.<BR><BR>
+`,
+      },
+    }).catch((error) => message.error(error.message));
     onChange && onChange();
   };
 
@@ -732,7 +763,7 @@ class PayDrawer extends React.Component {
                 </FormItem>
               </section>
               <section>
-                <FormItem label="实付金额">
+                <FormItem label="应付金额">
                   {getFieldDecorator('pur_sal', {
                     initialValue: sumPay,
                     rules: [{ required: true }],
@@ -824,12 +855,7 @@ export default class App extends React.Component {
   render() {
     return (
       <div className={styles.cashCenter}>
-        <EditableTable
-          user_id={this.props.id}
-          user_name={this.props.user_name}
-          id={this.props.id}
-          yztoken={this.props.yztoken}
-        ></EditableTable>
+        <EditableTable user_id={this.props.id} user_name={this.props.user_name} id={this.props.id}></EditableTable>
       </div>
     );
   }

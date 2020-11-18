@@ -92,7 +92,7 @@ class SendGoods extends React.Component {
 
     return (
       <Fragment>
-        <Button type="default" onClick={outData.express_type == 0 ? this.showModal : this.handleDirectSend}>
+        <Button type="primary" onClick={outData.express_type == 0 ? this.showModal : this.handleDirectSend}>
           发货
         </Button>
         <Modal
@@ -349,7 +349,7 @@ class ListItemTable extends React.Component {
     WAIT_SELLER_SEND_GOODS: 'textEdit',
     WAIT_BUYER_CONFIRM_GOODS: 'textSuccess',
     TRADE_SUCCESS: 'textSuccess',
-    TRADE_REFUNDING : 'textEdit',
+    TRADE_REFUNDING: 'textEdit',
     TRADE_REFUNDED: 'textDelete',
     TRADE_CLOSED: 'textDelete',
   };
@@ -515,7 +515,11 @@ class ListItemTable extends React.Component {
         if (index == 0) {
           if (outData.express_mode == '线下') {
             return {
-              children: '',
+              children: (
+                <Button type="gray" onClick={this.handlePrint} style={{ marginTop: 10 }}>
+                  打印小票
+                </Button>
+              ),
               props: {
                 rowSpan: len,
               },
@@ -523,14 +527,25 @@ class ListItemTable extends React.Component {
           } else {
             if (outData.status_str == '待发货') {
               return {
-                children: <SendGoods outData={outData} onChange={this.props.onChange} id={this.props.id}></SendGoods>,
+                children: (
+                  <Fragment>
+                    <SendGoods outData={outData} onChange={this.props.onChange} id={this.props.id}></SendGoods>
+                    <Button type="gray" onClick={this.handlePrint} style={{ marginTop: 10 }}>
+                      打印小票
+                    </Button>
+                  </Fragment>
+                ),
                 props: {
                   rowSpan: len,
                 },
               };
             } else {
               return {
-                children: <p></p>,
+                children: (
+                  <Button type="gray" onClick={this.handlePrint} style={{ marginTop: 10 }}>
+                    打印小票
+                  </Button>
+                ),
                 props: {
                   rowSpan: len,
                 },
@@ -649,7 +664,7 @@ ${item.title}
             订单号：{outData.tid} 下单时间：{moment(outData.created).format('YYYY-MM-DD')}
           </span>
           <div>
-            {outData.express_mode == '线上' && (
+            {/* {outData.express_mode == '线上' && (
               <Fragment>
                 <a className="textDelete" style={{ marginRight: 10 }} onClick={this.showRefundModal}>
                   线上订单退款
@@ -691,7 +706,7 @@ ${item.title}
                   </Form>
                 </Modal>
               </Fragment>
-            )}
+            )} */}
             {outData.express_type == 0 && outData.status == 'WAIT_BUYER_CONFIRM_GOODS' && (
               <a
                 style={{ marginRight: 10 }}

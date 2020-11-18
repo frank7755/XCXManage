@@ -37,7 +37,7 @@ class App extends React.Component {
             <Route
               render={props => (
                 <HasLayoutPages history={history}>
-                  {(id, username, telnumber, token, yztoken) => (
+                  {(id, username, telnumber, token) => (
                     <Switch>
                       {LayoutPages.map(({ component: Component, ...restProps }) => (
                         <Route
@@ -49,7 +49,6 @@ class App extends React.Component {
                                 user_name={username}
                                 telnumber={telnumber}
                                 token={token}
-                                yztoken={yztoken}
                                 {...props}
                               />
                             </Fragment>

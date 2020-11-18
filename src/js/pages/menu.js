@@ -13,7 +13,7 @@ export default function (shoptype) {
               },
               {
                 key: 802,
-                title: '销售查询',
+                title: '订单查询',
                 src: '/onlineorder',
               },
             ]
@@ -25,7 +25,7 @@ export default function (shoptype) {
               },
               {
                 key: 802,
-                title: '销售查询',
+                title: '订单查询',
                 src: '/onlineorderretail',
               },
             ],

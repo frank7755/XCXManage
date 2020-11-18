@@ -554,7 +554,9 @@ class ListItemTable extends React.Component {
                     </Modal>
                   </Fragment>
                 ) : (
-                  <p></p>
+                  <Button type="gray" onClick={this.handlePrint} style={{ marginTop: 10 }}>
+                    打印小票
+                  </Button>
                 ),
               props: {
                 rowSpan: len,
@@ -563,14 +565,25 @@ class ListItemTable extends React.Component {
           } else {
             if (outData.status_str == '待发货') {
               return {
-                children: <SendGoods outData={outData} onChange={this.props.onChange} id={this.props.id}></SendGoods>,
+                children: (
+                  <Fragment>
+                    <SendGoods outData={outData} onChange={this.props.onChange} id={this.props.id}></SendGoods>
+                    <Button type="gray" onClick={this.handlePrint} style={{ marginTop: 10 }}>
+                      打印小票
+                    </Button>
+                  </Fragment>
+                ),
                 props: {
                   rowSpan: len,
                 },
               };
             } else {
               return {
-                children: <p></p>,
+                children: (
+                  <Button type="gray" onClick={this.handlePrint} style={{ marginTop: 10 }}>
+                    打印小票
+                  </Button>
+                ),
                 props: {
                   rowSpan: len,
                 },

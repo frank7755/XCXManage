@@ -40,7 +40,6 @@ class FoodsInfo extends React.Component {
         item_id: val,
       },
     }).then((payload) => {
-
       this.setState({ clickSkuData: payload.pageData, visible: true, price: payload.pageData[0].price });
     });
   };
@@ -53,6 +52,7 @@ class FoodsInfo extends React.Component {
 
   handleCancel = () => {
     this.setState({ visible: false });
+    this.props.form.resetFields();
   };
 
   handleSkus = () => {
@@ -189,16 +189,44 @@ class ShoppingCart extends React.Component {
   };
 
   handlePay = () => {
+    const { chosenData } = this.props;
     request('/api/catering/ordertopay', {
       method: 'post',
       headers: { 'Content-Type': 'application/json;' },
       body: {
         id: this.props.id,
-        skus: this.props.chosenData,
+        skus: chosenData,
       },
     })
       .then((payload) => {
         message.success('结账成功');
+        request('/api/catering/xprint', {
+          method: 'post',
+          body: {
+            id: this.props.id,
+            sn: store.get('printSN'),
+            type: 4,
+            content: `
+<BR><BR><C><HB>${store.get('shopName')}
+
+<N>欢迎光临
+
+<L>桌位号：${val.desk_no}
+品名      数量          单价
+--------------------------------
+${chosenData
+  .map(
+    (item) => `
+${item.title}
+        ${item.count}           ￥${item.price}`
+  )
+  .join('')}
+--------------------------------
+日期：${moment().format('YYYY-MM-DD HH:mm:ss')}
+请保留您的小票，保护您的权益.<BR><BR>
+`,
+          },
+        }).catch((error) => message.error(error.message));
         this.handleClear();
       })
       .catch((err) => message.error(err.message));
