@@ -3,11 +3,11 @@
  * @description 工具包
  */
 
-import { createHashHistory } from 'history';
+import { createBrowserHistory } from 'history';
 import { debounce as originDebounce } from 'throttle-debounce';
 
 // history
-export const history = createHashHistory();
+export const history = createBrowserHistory();
 
 /**
  * @function typpy

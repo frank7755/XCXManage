@@ -12,6 +12,9 @@ export default {
     layout: false,
     component: loadable(() => import('~js/pages/Login.jsx')),
   },
+  '/auth': {
+    component: loadable(() => import('~js/pages/auth.jsx')),
+  },
   '/forget': {
     layout: false,
     component: loadable(() => import('~js/pages/Forget.jsx')),

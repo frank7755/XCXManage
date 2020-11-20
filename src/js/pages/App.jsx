@@ -1,7 +1,7 @@
 import '~css/reset-pc.less';
 import '~css/antd.less';
 import React, { Fragment } from 'react';
-import { HashRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import routes from './route';
 import { history } from '~js/utils/utils';
@@ -13,7 +13,7 @@ import 'moment/locale/zh-cn';
 
 const NoLayoutPages = [];
 const LayoutPages = [];
-Object.keys(routes).forEach(path => {
+Object.keys(routes).forEach((path) => {
   const route = routes[path];
   const { layout = true, exact = true, ...restProps } = route;
   const props = { key: path, path, exact, ...restProps };
@@ -32,25 +32,19 @@ class App extends React.Component {
         <Router history={history}>
           <Switch>
             {NoLayoutPages.map(({ component: Component, ...restProps }) => (
-              <Route {...restProps} render={props => <Component {...props} />} />
+              <Route {...restProps} render={(props) => <Component {...props} />} />
             ))}
             <Route
-              render={props => (
+              render={(props) => (
                 <HasLayoutPages history={history}>
                   {(id, username, telnumber, token) => (
                     <Switch>
                       {LayoutPages.map(({ component: Component, ...restProps }) => (
                         <Route
                           {...restProps}
-                          render={props => (
+                          render={(props) => (
                             <Fragment>
-                              <Component
-                                id={id}
-                                user_name={username}
-                                telnumber={telnumber}
-                                token={token}
-                                {...props}
-                              />
+                              <Component id={id} user_name={username} telnumber={telnumber} token={token} {...props} />
                             </Fragment>
                           )}
                         />
