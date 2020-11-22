@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import request from '~js/utils/request';
 import { formatThousands } from '~js/utils/utils';
 import moment from 'moment';
+import { Link } from 'react-router-dom';
 import styles from '~css/Goods/GoodsSearch.module.less';
 import { history } from '~js/utils/utils';
 import { store } from '~js/utils/utils';
@@ -401,9 +402,9 @@ class GoodsTable extends React.Component {
       render: (option, record) => {
         return (
           <Fragment>
-            <a style={{ margin: '0 5px' }} href={`#/goodsedit/${record.item_id}`}>
+            <Link style={{ margin: '0 5px' }} to={`/goodsedit/${record.item_id}`}>
               编辑
-            </a>
+            </Link>
             <ChangeGroup
               yztoken={this.props.yztoken}
               id={this.props.id}
