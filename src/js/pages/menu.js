@@ -99,9 +99,14 @@ export default function (shoptype) {
       title: '门店',
       children: [
         {
-          key: 102,
+          key: 101,
           title: '店员管理',
           src: '/staffmanage',
+        },
+        {
+          key: 102,
+          title: '小程序店面编辑',
+          src: '/wxManage',
         },
       ],
     },

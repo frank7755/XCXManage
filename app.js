@@ -5,7 +5,7 @@ const cors = require('koa2-cors');
 const httpProxy = require('http-proxy');
 const app = new Koa();
 const server = require('koa-files');
-const target = 'http://114.67.90.231:8888';
+const target = 'http://101.200.210.169:8888';
 const proxy = httpProxy.createProxyServer({ target, changeOrigin: true });
 
 app.use(server());

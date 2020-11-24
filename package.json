@@ -76,6 +76,7 @@
   },
   "dependencies": {
     "braft-editor": "^2.3.9",
+    "china-division": "^2.3.1",
     "http-proxy": "^1.18.0",
     "immutability-helper": "^3.1.1",
     "koa-files": "^1.0.1",

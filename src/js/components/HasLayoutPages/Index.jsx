@@ -114,6 +114,7 @@ class App extends React.Component {
     draw: false,
     openKeys: [8],
     menu: '',
+    wxUrl: null,
   };
 
   onOpenChange = (openKeys) => {
@@ -130,6 +131,16 @@ class App extends React.Component {
     } else {
       this.setState({ openKeys: [] });
     }
+
+    request('/api/wx_appid_sel', {
+      method: 'post',
+      body: {
+        id: store.get(userId),
+      },
+      headers: { 'Content-Type': 'application/json;' },
+    })
+      .then((payload) => this.setState({ wxUrl: payload.qrcode_url }))
+      .catch((error) => message.error(error.message));
   }
 
   handleLogout = () => {
@@ -166,6 +177,7 @@ class App extends React.Component {
     const { Header, Content, Sider } = Layout;
     const { draw, menu } = this.state;
     const path = this.props.location.pathname;
+    const { wxUrl } = this.state;
 
     const userSlideMenu = (
       <Menu className={styles.dropDown}>
@@ -189,7 +201,8 @@ class App extends React.Component {
       <Menu style={{ width: '200px', textAlign: 'center' }}>
         <Menu.Item>
           <p>请使用微信扫描二维码</p>
-          <Avatar src={require('~images/wechatpro.png')} size={180} style={{ display: 'block', margin: '10px auto' }}></Avatar>
+
+          {wxUrl && <Avatar src={wxUrl} size={180} style={{ display: 'block', margin: '10px auto' }}></Avatar>}
         </Menu.Item>
       </Menu>
     );
@@ -266,6 +279,7 @@ class App extends React.Component {
               height: '100%',
               minHeight: 'auto',
               overflow: 'auto',
+              position: 'relative',
             }}
           >
             {this.props.children(
@@ -282,4 +296,4 @@ class App extends React.Component {
   }
 }
 
-export default withRouter(App);
+export default App;

@@ -53,7 +53,12 @@
   }
 
   &-blue {
-    .button-variant-other(#006acc;#fff; #006acc);
+    .button-variant-other(#6ea5ff;#fff; #6ea5ff);
+    &:hover,
+    &:focus,
+    &:active {
+      .button-color(#006acc; #fff;#006acc );
+    }
   }
   &-blue&-clicked:after {
     border-color: #006acc;

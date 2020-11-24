@@ -1,10 +1,10 @@
 import '~css/reset-pc.less';
 import '~css/antd.less';
 import React, { Fragment } from 'react';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import routes from './route';
-import { history } from '~js/utils/utils';
+import { history } from '~js/utils/utils.js';
 import HasLayoutPages from '~js/components/HasLayoutPages/Index';
 import { ConfigProvider } from 'antd'; //全局语言包配置
 import zhCN from 'antd/es/locale/zh_CN';
@@ -36,7 +36,7 @@ class App extends React.Component {
             ))}
             <Route
               render={(props) => (
-                <HasLayoutPages history={history}>
+                <HasLayoutPages {...props}>
                   {(id, username, telnumber, token) => (
                     <Switch>
                       {LayoutPages.map(({ component: Component, ...restProps }) => (

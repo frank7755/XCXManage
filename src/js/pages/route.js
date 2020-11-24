@@ -12,8 +12,8 @@ export default {
     layout: false,
     component: loadable(() => import('~js/pages/Login.jsx')),
   },
-  '/auth': {
-    component: loadable(() => import('~js/pages/auth.jsx')),
+  '/authsuccess': {
+    component: loadable(() => import('~js/pages/Auth/AuthSuccess.jsx')),
   },
   '/forget': {
     layout: false,
@@ -78,6 +78,9 @@ export default {
   },
   '/staffmanage': {
     component: loadable(() => import('~js/pages/Shop/StaffManage.jsx')),
+  },
+  '/wxManage': {
+    component: loadable(() => import('~js/pages/Shop/WXManage.jsx')),
   },
   '/sourcecenter': {
     component: loadable(() => import('~js/pages/Upload/Index.jsx')), //素材中心

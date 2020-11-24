@@ -2154,6 +2154,11 @@ chalk@^3.0.0:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
+china-division@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.npm.taobao.org/china-division/download/china-division-2.3.1.tgz#a49fa806af01d1852747466ad3c30bf0be988511"
+  integrity sha1-pJ+oBq8B0YUnR0Zq08ML8L6YhRE=
+
 chokidar@^2.1.8:
   version "2.1.8"
   resolved "https://registry.npm.taobao.org/chokidar/download/chokidar-2.1.8.tgz?cache=0&sync_timestamp=1587380303979&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fchokidar%2Fdownload%2Fchokidar-2.1.8.tgz#804b3a7b6a99358c3c5c61e71d8728f041cff917"

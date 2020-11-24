@@ -430,7 +430,6 @@ export default class App extends React.Component {
 
   render() {
     const { group, activeKey, activeName, total, pictures, current } = this.state;
-
     return (
       <div className={styles.pictures}>
         <div className={styles.groupLeft}>
@@ -484,6 +483,7 @@ export default class App extends React.Component {
                     checkedValue={item}
                     value={item.image_id}
                     onChange={this.handleChecked}
+                    disabled={!this.props.maxChecked}
                   >
                     {item.name}
                   </Checkbox>
