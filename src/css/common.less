@@ -6,6 +6,8 @@
 @text-gray: #999;
 @text-darkgray: #666666;
 @text-primary: #337ab7;
+@hover-red: #f35954;
+@hover-blue: #1f86e6;
 
 :global(.title) {
   display: flex;
@@ -30,6 +32,10 @@
 }
 :global(.textDelete) {
   color: @info-red;
+  transition: color ease 0.5s;
+  &:hover {
+    color: @hover-red;
+  }
 }
 
 :global(.textSuccess) {

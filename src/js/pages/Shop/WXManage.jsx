@@ -153,7 +153,7 @@ class GetImageGroup extends React.Component {
 
 @Form.create()
 export default class App extends React.Component {
-  state = { topUrl: null, buttonUrl: null, initialData: null };
+  state = { logoUrl: null, topUrl: null, buttonUrl: null, initialData: null };
 
   componentDidMount() {
     this.refreshPage();
@@ -169,6 +169,14 @@ export default class App extends React.Component {
     }).then((payload) => {
       this.setState({ initialData: payload });
     });
+  };
+
+  getLogo = (val) => {
+    if (val.length > 0) {
+      this.setState({ logoUrl: val[0].image_url });
+    } else {
+      this.setState({ logoUrl: [] });
+    }
   };
 
   getTopImage = (val) => {
@@ -192,14 +200,15 @@ export default class App extends React.Component {
     e.preventDefault();
     const { form } = this.props;
     form.validateFields((err, val) => {
-      console.log(val);
+      console.log(val, initialData);
       if (!err) {
         request('/api/shop_base_upd', {
           method: 'post',
           body: {
             id: this.props.id,
-            banner_logo: topUrl ? topUrl : initialData.banner_logo[0].image_url,
-            order_banner_logo: buttonUrl ? buttonUrl : initialData.banner_logo[0].image_url,
+            logo: topUrl ? topUrl : initialData.length > 0 ? initialData.banner_logo[0].image_url : [],
+            banner_logo: topUrl ? topUrl : initialData.length > 0 ? initialData.banner_logo[0].image_url : [],
+            order_banner_logo: buttonUrl ? buttonUrl : initialData.length > 0 ? initialData.order_banner_logo[0].image_url : [],
             province_code: val.location[0],
             city_code: val.location[1],
             area_code: val.location[2],
@@ -312,6 +321,15 @@ export default class App extends React.Component {
               initialValue: initialData && initialData.shop_customize,
             })(<TextArea style={{ height: 200, resize: 'none' }} placeholder="请输入店铺介绍"></TextArea>)}
           </FormItem>
+          <section>
+            <FormItem label="店铺logo">
+              <GetImageGroup
+                id={this.props.id}
+                onChange={this.getLogo}
+                imgList={initialData && initialData.logo}
+              ></GetImageGroup>
+            </FormItem>
+          </section>
           <section>
             <FormItem label="店铺顶部图片">
               <GetImageGroup

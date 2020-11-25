@@ -1,3 +1,4 @@
+@import "../common.less";
 .pictures {
   display: flex;
   flex-wrap: nowrap;
@@ -22,8 +23,13 @@
           display: flex;
           justify-content: space-between;
           color: #333;
-          font-size: 16px;
+          font-size: 14px;
           align-items: center;
+          font-weight: bold;
+          line-height: 1.5;
+          > span {
+            flex: 1;
+          }
           &:hover {
             > p {
               display: block;

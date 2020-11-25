@@ -167,7 +167,8 @@ class OrderList extends React.Component {
   };
 
   componentDidMount() {
-    this.handleSearch();
+    console.log('11');
+    this.fetch();
   }
 
   getDateRanges() {
@@ -183,6 +184,7 @@ class OrderList extends React.Component {
   fetch = (page, pageSize) => {
     this.props.form.validateFields((err, value) => {
       const { dateRange, ...rest } = value;
+
       const [start_time, end_time] = value.dateRange;
 
       if (!err) {
@@ -197,14 +199,17 @@ class OrderList extends React.Component {
             pageSize: pageSize || 20,
             ...rest,
           },
-        }).then((payload) => {
-          this.setState({ listData: payload.pageData, total: payload.total, current: payload.page });
-        });
+        })
+          .then((payload) => {
+            this.setState({ listData: payload.pageData, total: payload.total, current: payload.page });
+          })
+          .catch((error) => message.error(error.message));
       }
     });
   };
 
-  handleSearch = () => {
+  handleSearch = (e) => {
+    e.preventDefault();
     this.fetch();
   };
 
