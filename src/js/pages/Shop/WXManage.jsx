@@ -93,7 +93,6 @@ class GetImageGroup extends React.Component {
     const { onChange, maxChecked } = this.props;
 
     const { changeData, confirmData } = this.state;
-
     if (changeData.length > maxChecked) {
       message.error(`最多上传${maxChecked}张图片`);
     } else {
@@ -104,7 +103,7 @@ class GetImageGroup extends React.Component {
           confirmID: changeData.length > 0 ? changeData.map((item) => item.image_id) : [],
         },
         () => {
-          onChange && onChange(confirmData);
+          onChange && onChange(this.state.confirmData);
         }
       );
     }
@@ -125,8 +124,8 @@ class GetImageGroup extends React.Component {
     onChange && onChange(newImageData);
   };
   render() {
-    const { visible, changeData, checkedID, confirmData, confirmID } = this.state;
-    console.log(checkedID, 'id');
+    const { visible, checkedID, confirmData } = this.state;
+    console.log(this.props.confirmData);
 
     return (
       <div>
@@ -166,7 +165,7 @@ class GetImageGroup extends React.Component {
 
 @Form.create()
 export default class App extends React.Component {
-  state = { logoUrl: null, topUrl: null, buttonUrl: null, initialData: null, logoValue: null };
+  state = { logoUrl: null, topUrl: null, buttonUrl: null, initialData: null, logoValue: null, topVal: null, buttonVal: null };
 
   componentDidMount() {
     this.refreshPage();
@@ -200,15 +199,16 @@ export default class App extends React.Component {
 
   getTopImage = (val) => {
     if (val.length > 0) {
-      this.setState({ topUrl: val[0].image_url });
+      this.setState({ topUrl: val[0].image_url, topVal: val });
     } else {
       this.setState({ topUrl: null });
     }
   };
 
   getButtonImage = (val) => {
+    console.log(val);
     if (val.length > 0) {
-      this.setState({ buttonUrl: val[0].image_url });
+      this.setState({ buttonUrl: val[0].image_url, buttonVal: val });
     } else {
       this.setState({ buttonUrl: null });
     }
@@ -254,7 +254,7 @@ export default class App extends React.Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { initialData, logoValue } = this.state;
+    const { initialData, logoValue, topVal, buttonVal } = this.state;
 
     return (
       <div className={styles.wxManage}>
@@ -348,28 +348,35 @@ export default class App extends React.Component {
                   onChange={this.getLogo}
                   defaultValue={initialData.logo ? initialData.logo : []}
                   checkedID={initialData.logo ? initialData.logo.map((item) => item.image_id) : []}
-                  value={logoValue}
-                  maxChecked={2}
+                  maxChecked={1}
                 ></GetImageGroup>
               )}
             </FormItem>
           </section>
           <section>
             <FormItem label="店铺顶部图片">
-              {/* <GetImageGroup
-                id={this.props.id}
-                onChange={this.getTopImage}
-                imgList={initialData && initialData.banner_logo}
-              ></GetImageGroup> */}
+              {initialData && (
+                <GetImageGroup
+                  id={this.props.id}
+                  onChange={this.getTopImage}
+                  defaultValue={initialData.banner_logo ? initialData.banner_logo : []}
+                  checkedID={initialData.banner_logo ? initialData.banner_logo.map((item) => item.image_id) : []}
+                  maxChecked={1}
+                ></GetImageGroup>
+              )}
             </FormItem>
           </section>
           <section>
             <FormItem label="下单按钮图片">
-              {/* <GetImageGroup
-                id={this.props.id}
-                onChange={this.getButtonImage}
-                imgList={initialData && initialData.order_banner_logo}
-              ></GetImageGroup> */}
+              {initialData && (
+                <GetImageGroup
+                  id={this.props.id}
+                  onChange={this.getButtonImage}
+                  defaultValue={initialData.order_banner_logo ? initialData.order_banner_logo : []}
+                  checkedID={initialData.order_banner_logo ? initialData.order_banner_logo.map((item) => item.image_id) : []}
+                  maxChecked={1}
+                ></GetImageGroup>
+              )}
             </FormItem>
           </section>
           <FormItem>
