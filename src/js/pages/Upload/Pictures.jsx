@@ -404,16 +404,18 @@ export default class App extends React.Component {
   };
 
   handleChecked = (e) => {
-    const { onChange, maxChecked } = this.props;
-    let newArr = [...this.props.checkedData];
-
+    const { onChange } = this.props;
+    // let newArr = [...this.props.checkedData];
+    // if (e.target.checked) {
+    //   newArr.length < maxChecked ? newArr.push(e.target.checkedValue) : message.error(`请选择不超过${maxChecked}张图片`);
+    // } else {
+    //   newArr = newArr.filter((item) => item.image_id != e.target.value);
+    // }
     if (e.target.checked) {
-      newArr.length < maxChecked ? newArr.push(e.target.checkedValue) : message.error(`请选择不超过${maxChecked}张图片`);
+      onChange && onChange(e.target.checkedValue, 'add');
     } else {
-      newArr = newArr.filter((item) => item.image_id != e.target.value);
+      onChange && onChange(e.target.checkedValue, 'del');
     }
-
-    onChange && onChange(newArr);
   };
 
   componentDidMount() {
@@ -483,7 +485,6 @@ export default class App extends React.Component {
                     checkedValue={item}
                     value={item.image_id}
                     onChange={this.handleChecked}
-                    disabled={!this.props.maxChecked}
                   >
                     {item.name}
                   </Checkbox>

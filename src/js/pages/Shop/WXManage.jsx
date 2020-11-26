@@ -51,17 +51,14 @@ const formItemLayout = {
 };
 
 class GetImageGroup extends React.Component {
-  state = { visible: false, imgData: [], checkedID: [], urlList: [] };
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.imgList != this.props.imgList) {
-      this.setState({
-        urlList: nextProps.imgList,
-        imgData: nextProps.imgList,
-        checkedID: nextProps.imgList.map((item) => item.image_id),
-      });
-    }
-  }
+  // this.props直接赋值给state，只在组件初始化时有用，后续render不会改变
+  state = {
+    visible: false,
+    changeData: this.props.defaultValue,
+    checkedID: this.props.checkedID,
+    confirmData: this.props.defaultValue,
+    confirmID: this.props.checkedID,
+  };
 
   showModal = () => {
     this.setState({
@@ -75,60 +72,82 @@ class GetImageGroup extends React.Component {
     });
   };
 
-  getImageUrl = (val) => {
-    this.setState({
-      imgData: val,
-      checkedID: val.map((item) => item.image_id),
-    });
+  getImageUrl = (val, type) => {
+    let newArr = [...this.state.changeData];
+    if (type == 'add') {
+      newArr.push(val);
+      this.setState({
+        changeData: newArr,
+        checkedID: newArr.length > 0 ? newArr.map((item) => item.image_id) : [],
+      });
+    } else {
+      newArr = newArr.filter((item) => item.image_id != val.image_id);
+      this.setState({
+        changeData: newArr,
+        checkedID: newArr.length > 0 ? newArr.map((item) => item.image_id) : [],
+      });
+    }
   };
 
   handleOk = () => {
-    const { onChange } = this.props;
+    const { onChange, maxChecked } = this.props;
 
-    const { imgData } = this.state;
+    const { changeData, confirmData } = this.state;
 
-    this.setState({ visible: false, urlList: imgData });
-
-    onChange && onChange(imgData);
+    if (changeData.length > maxChecked) {
+      message.error(`最多上传${maxChecked}张图片`);
+    } else {
+      this.setState(
+        {
+          visible: false,
+          confirmData: changeData,
+          confirmID: changeData.length > 0 ? changeData.map((item) => item.image_id) : [],
+        },
+        () => {
+          onChange && onChange(confirmData);
+        }
+      );
+    }
   };
 
   handleRemove = (k) => {
-    const { urlList, checkedID, imgData } = this.state;
+    const { changeData } = this.state;
     const { onChange } = this.props;
-    const newImageData = imgData.filter((item) => item.image_id != k);
+    const newImageData = changeData.filter((item) => item.image_id != k);
+    console.log(k, newImageData);
 
     this.setState({
-      imgData: imgData.filter((item) => item.image_id != k),
-      urlList: urlList.filter((item) => item.image_id != k),
-      checkedID: checkedID.filter((item) => item != k),
+      changeData: newImageData,
+      checkedID: newImageData.map((item) => item.image_id),
+      confirmData: newImageData,
     });
 
     onChange && onChange(newImageData);
   };
   render() {
-    const { visible, urlList, checkedID, imgData } = this.state;
+    const { visible, changeData, checkedID, confirmData, confirmID } = this.state;
+    console.log(checkedID, 'id');
 
     return (
       <div>
         <Button onClick={this.showModal}>选择商品图</Button>
         <p style={{ color: '#999', marginTop: 5, marginBottom: 12 }}>最多选择1张图片</p>
         <div className={styles.imgList}>
-          {urlList.length > 0 &&
-            urlList.map((item) => (
-              <span
-                style={{ position: 'relative', display: 'inline-block', marginRight: 24, marginBottom: 12, marginBottom: 12 }}
-                key={item.image_id}
-              >
-                <Avatar
-                  src={item.image_url}
-                  size={60}
-                  style={{ border: '1px solid #999' }}
-                  shape="square"
-                  className={styles.avatar}
-                ></Avatar>
-                <Icon type="close-circle" onClick={() => this.handleRemove(item.image_id)} className={styles.close}></Icon>
-              </span>
-            ))}
+          {confirmData.map((item) => (
+            <span
+              style={{ position: 'relative', display: 'inline-block', marginRight: 24, marginBottom: 12, marginBottom: 12 }}
+              key={item.image_id}
+            >
+              <Avatar
+                src={item.image_url}
+                size={60}
+                style={{ border: '1px solid #999' }}
+                shape="square"
+                className={styles.avatar}
+              ></Avatar>
+              <Icon type="close-circle" onClick={() => this.handleRemove(item.image_id)} className={styles.close}></Icon>
+            </span>
+          ))}
         </div>
         <Modal
           className={styles.pictureModal}
@@ -138,13 +157,7 @@ class GetImageGroup extends React.Component {
           onOk={this.handleOk}
           onCancel={this.handleCancel}
         >
-          <Picture
-            id={this.props.id}
-            onChange={this.getImageUrl}
-            checkedID={checkedID}
-            checkedData={imgData}
-            maxChecked={1}
-          ></Picture>
+          <Picture id={this.props.id} onChange={this.getImageUrl} checkedID={checkedID} checkedData={confirmData}></Picture>
         </Modal>
       </div>
     );
@@ -153,7 +166,7 @@ class GetImageGroup extends React.Component {
 
 @Form.create()
 export default class App extends React.Component {
-  state = { logoUrl: null, topUrl: null, buttonUrl: null, initialData: null };
+  state = { logoUrl: null, topUrl: null, buttonUrl: null, initialData: null, logoValue: null };
 
   componentDidMount() {
     this.refreshPage();
@@ -167,15 +180,21 @@ export default class App extends React.Component {
       },
       headers: { 'Content-Type': 'application/json;' },
     }).then((payload) => {
-      this.setState({ initialData: payload });
+      this.setState({
+        initialData: payload,
+        logoUrl: payload.logo ? payload.logo[0].image_url : null,
+        topUrl: payload.banner_logo ? payload.banner_logo[0].image_url : null,
+        buttonUrl: payload.order_banner_logo ? payload.order_banner_logo[0].image_url : null,
+      });
     });
   };
 
   getLogo = (val) => {
+    console.log(val);
     if (val.length > 0) {
-      this.setState({ logoUrl: val[0].image_url });
+      this.setState({ logoUrl: val[0].image_url, logoValue: val });
     } else {
-      this.setState({ logoUrl: [] });
+      this.setState({ logoUrl: null, logoValue: null });
     }
   };
 
@@ -183,7 +202,7 @@ export default class App extends React.Component {
     if (val.length > 0) {
       this.setState({ topUrl: val[0].image_url });
     } else {
-      this.setState({ topUrl: [] });
+      this.setState({ topUrl: null });
     }
   };
 
@@ -191,24 +210,24 @@ export default class App extends React.Component {
     if (val.length > 0) {
       this.setState({ buttonUrl: val[0].image_url });
     } else {
-      this.setState({ buttonUrl: [] });
+      this.setState({ buttonUrl: null });
     }
   };
 
   handleSubmit = (e) => {
-    const { topUrl, buttonUrl, initialData } = this.state;
+    const { topUrl, buttonUrl, logoUrl } = this.state;
+
     e.preventDefault();
     const { form } = this.props;
     form.validateFields((err, val) => {
-      console.log(val, initialData);
       if (!err) {
         request('/api/shop_base_upd', {
           method: 'post',
           body: {
             id: this.props.id,
-            logo: topUrl ? topUrl : initialData.length > 0 ? initialData.banner_logo[0].image_url : [],
-            banner_logo: topUrl ? topUrl : initialData.length > 0 ? initialData.banner_logo[0].image_url : [],
-            order_banner_logo: buttonUrl ? buttonUrl : initialData.length > 0 ? initialData.order_banner_logo[0].image_url : [],
+            logo: logoUrl,
+            banner_logo: topUrl,
+            order_banner_logo: buttonUrl,
             province_code: val.location[0],
             city_code: val.location[1],
             area_code: val.location[2],
@@ -235,7 +254,7 @@ export default class App extends React.Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { initialData } = this.state;
+    const { initialData, logoValue } = this.state;
 
     return (
       <div className={styles.wxManage}>
@@ -323,29 +342,34 @@ export default class App extends React.Component {
           </FormItem>
           <section>
             <FormItem label="店铺logo">
-              <GetImageGroup
-                id={this.props.id}
-                onChange={this.getLogo}
-                imgList={initialData && initialData.logo}
-              ></GetImageGroup>
+              {initialData && (
+                <GetImageGroup
+                  id={this.props.id}
+                  onChange={this.getLogo}
+                  defaultValue={initialData.logo ? initialData.logo : []}
+                  checkedID={initialData.logo ? initialData.logo.map((item) => item.image_id) : []}
+                  value={logoValue}
+                  maxChecked={2}
+                ></GetImageGroup>
+              )}
             </FormItem>
           </section>
           <section>
             <FormItem label="店铺顶部图片">
-              <GetImageGroup
+              {/* <GetImageGroup
                 id={this.props.id}
                 onChange={this.getTopImage}
                 imgList={initialData && initialData.banner_logo}
-              ></GetImageGroup>
+              ></GetImageGroup> */}
             </FormItem>
           </section>
           <section>
             <FormItem label="下单按钮图片">
-              <GetImageGroup
+              {/* <GetImageGroup
                 id={this.props.id}
                 onChange={this.getButtonImage}
                 imgList={initialData && initialData.order_banner_logo}
-              ></GetImageGroup>
+              ></GetImageGroup> */}
             </FormItem>
           </section>
           <FormItem>
