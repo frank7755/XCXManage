@@ -129,7 +129,7 @@ export default class App extends React.Component {
         })
           .then((payload) => {
             message.success('编辑成功!');
-            history.push('/businessinfo');
+            this.props.history.push('/businessinfo');
           })
           .catch((error) => message.error(error.message));
       } else {

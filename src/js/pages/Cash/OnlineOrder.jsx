@@ -167,7 +167,6 @@ class OrderList extends React.Component {
   };
 
   componentDidMount() {
-    console.log('11');
     this.fetch();
   }
 

@@ -4,7 +4,6 @@ import { message, Layout, Menu, Icon, Dropdown, Avatar, Modal, Form, Input, Butt
 import { Link } from 'react-router-dom';
 import { store } from '~js/utils/utils';
 import menuFunction from '~js/pages/menu.js';
-import { withRouter } from 'react-router-dom';
 import styles from './Index.module.less';
 import Md5 from '~js/utils/md5.js';
 

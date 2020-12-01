@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
 import request from '~js/utils/request';
 import styles from '~css/Settings/BusinessInfo.module.less';
-import { history } from '~js/utils/utils';
 import moment from 'moment';
 import { Button, Empty, Modal, Form, Input, Card, Row, Col, message, Popconfirm, Select } from 'antd';
 
@@ -172,10 +171,10 @@ export default class App extends React.Component {
     }).then((payload) => this.setState({ data: payload.pageData, status: payload.pageData[0].audit_status }));
   }
   handleAdd = () => {
-    history.push('/businessinfoadd');
+    this.props.history.push('/businessinfoadd');
   };
   handleEdit = () => {
-    history.push('/businessinfoedit');
+    this.props.history.push('/businessinfoedit');
   };
   render() {
     const { data, status } = this.state;

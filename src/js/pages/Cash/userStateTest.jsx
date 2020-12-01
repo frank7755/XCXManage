@@ -1,16 +1,40 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
-export default function Example() {
-  // 声明一个叫 "count" 的 state 变量
-  const [state, setState] = useState({ a: 1, b: 2 });
-  // const [num, setCount] = useState('world');
+const themes = {
+  light: {
+    foreground: '#000000',
+    background: '#eeeeee',
+  },
+  dark: {
+    foreground: '#ffffff',
+    background: '#222222',
+  },
+};
+const ThemeContext = React.createContext(themes.light);
 
+function Toolbar({ onChange }) {
   return (
     <div>
-      <p>
-        You clicked {state.a} - {state.b} times
-      </p>
-      <button onClick={() => setState({ ...state, a: 2})}>Click me</button>
+      <ThemedButton onChange={onChange} />
     </div>
+  );
+}
+
+function ThemedButton({ onChange }) {
+  const theme = useContext(ThemeContext);
+  return (
+    <button onClick={onChange} style={theme}>
+      I am styled by theme context!
+    </button>
+  );
+}
+
+export default function App() {
+  const [theme, setTheme] = useState(themes.light);
+
+  return (
+    <ThemeContext.Provider value={theme}>
+      <Toolbar onChange={() => setTheme({ ...themes.dark })} />
+    </ThemeContext.Provider>
   );
 }

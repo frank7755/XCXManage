@@ -3,7 +3,6 @@ import styles from '~css/login.module.less';
 import { Form, Icon, Input, Button, Checkbox, message, Avatar, Select } from 'antd';
 import request from '~js/utils/request';
 import { store } from '~js/utils/utils';
-import { history } from '~js/utils/utils';
 import { Link } from 'react-router-dom';
 import Md5 from '~js/utils/md5.js';
 

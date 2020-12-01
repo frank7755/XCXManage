@@ -17,7 +17,11 @@ app.use(cors());
 router.all('/api/*', async (ctx, next) => {
   ctx.respond = false;
 
-  await proxy.web(ctx.req, ctx.res);
+  try {
+    await proxy.web(ctx.req, ctx.res);
+  } catch (error) {
+    console.error(error)
+  }
 });
 
 router.get(
@@ -32,6 +36,8 @@ router.get(
 );
 
 app.use(router.routes());
+
+app.on('error', (error) => console.error(error));
 
 app.listen(8080);
 

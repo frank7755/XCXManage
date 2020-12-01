@@ -12,6 +12,10 @@ export default {
     layout: false,
     component: loadable(() => import('~js/pages/Login.jsx')),
   },
+  '/test': {
+    layout: false,
+    component: loadable(() => import('~js/pages/Cash/userStateTest.jsx')),
+  },
   '/authsuccess': {
     component: loadable(() => import('~js/pages/Auth/AuthSuccess.jsx')),
   },

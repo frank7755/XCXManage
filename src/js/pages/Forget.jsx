@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react';
 import { store } from '~js/utils/utils';
-import { history } from '~js/utils/utils';
 import request from '~js/utils/request';
 import { message, Layout, Menu, Icon, Dropdown, Avatar, Modal, Form, Input, Button } from 'antd';
 import styles from '~css/Forget.module.less';
@@ -41,6 +40,7 @@ export default class App extends React.Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
+
     this.props.form.validateFields((err, values) => {
       if (!err) {
         request('/api/login/forger_user', {
@@ -52,7 +52,7 @@ export default class App extends React.Component {
         })
           .then((payload) => {
             message.success('修改成功');
-            history.push('/login');
+            this.props.history.push('/login');
           })
           .catch((error) => message.error(error.message));
       }

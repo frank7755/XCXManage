@@ -37,14 +37,21 @@ class App extends React.Component {
             <Route
               render={(props) => (
                 <HasLayoutPages {...props}>
-                  {(id, username, telnumber, token) => (
+                  {(id, username, telnumber, token, shoptype) => (
                     <Switch>
                       {LayoutPages.map(({ component: Component, ...restProps }) => (
                         <Route
                           {...restProps}
                           render={(props) => (
                             <Fragment>
-                              <Component id={id} user_name={username} telnumber={telnumber} token={token} {...props} />
+                              <Component
+                                id={id}
+                                user_name={username}
+                                shoptype={shoptype}
+                                telnumber={telnumber}
+                                token={token}
+                                {...props}
+                              />
                             </Fragment>
                           )}
                         />

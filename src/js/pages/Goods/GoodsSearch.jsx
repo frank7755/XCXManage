@@ -4,7 +4,6 @@ import { formatThousands } from '~js/utils/utils';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import styles from '~css/Goods/GoodsSearch.module.less';
-import { history } from '~js/utils/utils';
 import { store } from '~js/utils/utils';
 import FormSearch from '~js/components/FormSearch/';
 import serveTable from '~js/components/serveTable';
@@ -78,11 +77,7 @@ class GoodsAction extends React.PureComponent {
   goodsAdd = () => {
     const { history } = this.props;
 
-    if (store.get(shopType) == 1) {
-      history.push('/foodsadd');
-    } else {
-      history.push('/goodsadd');
-    }
+    history.push('/goodsadd');
   };
 
   render() {
@@ -529,11 +524,10 @@ class GoodsTable extends React.Component {
         <h2 className="title">
           <span>商品</span>
           <GoodsAction
-            type="add"
             id={this.props.id}
             refresh={this.refresh}
             user_name={user_name}
-            history={history}
+            history={this.props.history}
             user_id={user_id}
           ></GoodsAction>
         </h2>
@@ -620,7 +614,7 @@ export default class App extends React.Component {
   render() {
     return (
       <div className={styles.goodManage}>
-        <GoodsTable source={`/api/t_goods/select`} id={this.props.id}></GoodsTable>
+        <GoodsTable source={`/api/t_goods/select`} history={this.props.history} id={this.props.id}></GoodsTable>
       </div>
     );
   }
