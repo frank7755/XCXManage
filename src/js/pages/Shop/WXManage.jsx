@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Form, Input, Modal, Avatar, Icon, Tooltip, message, Cascader } from 'antd';
+import { Button, Form, Input, Modal, Avatar, Icon, Tooltip, message, Cascader, TimePicker, InputNumber } from 'antd';
 import Picture from '~js/pages/Upload/Pictures.jsx';
 import styles from '~css/Shop/WXManage.module.less';
 import request from '~js/utils/request';
@@ -8,6 +8,9 @@ import TextArea from 'antd/lib/input/TextArea';
 import provinces from 'china-division/dist/provinces.json';
 import cities from 'china-division/dist/cities.json';
 import areas from 'china-division/dist/areas.json';
+import moment from 'moment';
+import 'moment/locale/zh-cn';
+moment.locale('zh-cn');
 
 areas.forEach((area) => {
   const matchCity = cities.filter((city) => city.code === area.cityCode)[0];
@@ -125,7 +128,6 @@ class GetImageGroup extends React.Component {
   };
   render() {
     const { visible, checkedID, confirmData } = this.state;
-    console.log(this.props.confirmData);
 
     return (
       <div>
@@ -315,10 +317,33 @@ export default class App extends React.Component {
             </FormItem>
           </section>
           <section>
-            <FormItem label="营业时间">
-              {getFieldDecorator('business_hours', {
-                initialValue: initialData && initialData.business_hours,
-              })(<Input placeholder="请输入营业时间"></Input>)}
+            <FormItem label="营业开始时间">
+              {getFieldDecorator('business_hours_start', {
+                initialValue: initialData && moment(initialData.business_hours_start),
+              })(<TimePicker />)}
+            </FormItem>
+          </section>
+          <section>
+            <FormItem label="营业结束时间">
+              {getFieldDecorator('business_hours_end', {
+                initialValue: initialData && moment(initialData.business_hours_end),
+              })(<TimePicker />)}
+            </FormItem>
+          </section>
+          <section>
+            <FormItem label="起送价格">
+              {getFieldDecorator('is_dispatching', {
+                initialValue: initialData && initialData.is_dispatching,
+              })(<InputNumber placeholder="请输入外卖起送价格"></InputNumber>)}
+              <span style={{ marginLeft: 10 }}>元</span>
+            </FormItem>
+          </section>
+          <section>
+            <FormItem label="配送距离" help="以店铺地址为中心的配送范围">
+              {getFieldDecorator('is_peisong', {
+                initialValue: initialData && initialData.is_peisong,
+              })(<InputNumber placeholder="请输入外卖配送距离"></InputNumber>)}
+              <span style={{ marginLeft: 10 }}>公里</span>
             </FormItem>
           </section>
           <FormItem

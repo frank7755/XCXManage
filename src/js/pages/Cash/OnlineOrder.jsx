@@ -693,14 +693,14 @@ class ListItemTable extends React.Component {
       method: 'post',
       body: {
         id: this.props.id,
-        sn: store.get('printSN'),
+        sn: store.get('sn'),
         type: 4,
         content: `
 <BR><BR><C><HB>${store.get('shopName')}
 
 <N>欢迎光临
-
-<L>桌位号：${outData.desk_no}
+<L>桌位号：${outData.desk_no}</L>
+<L>配送单号：${outData.delivery_id}</L>
 品名      数量          单价
 --------------------------------
 ${data

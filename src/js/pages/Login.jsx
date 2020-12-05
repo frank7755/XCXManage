@@ -254,6 +254,7 @@ export default class App extends React.Component {
             store.set(name, payload.user_name);
             store.set(role, payload.user_role);
             store.set(shopType, payload.shop_type);
+            store.set(sn, payload.sn);
 
             history.push('/');
           })

@@ -204,14 +204,13 @@ class ShoppingCart extends React.Component {
           method: 'post',
           body: {
             id: this.props.id,
-            sn: store.get('printSN'),
+            sn: store.get('sn'),
             type: 4,
             content: `
 <BR><BR><C><HB>${store.get('shopName')}
 
 <N>欢迎光临
 
-<L>桌位号：${val.desk_no}
 品名      数量          单价
 --------------------------------
 ${chosenData
@@ -388,7 +387,7 @@ export default class App extends React.Component {
             method: 'post',
             body: {
               id: this.props.id,
-              sn: store.get('printSN'),
+              sn: store.get('sn'),
               type: 4,
               content: `
 <BR><BR><C><HB>${store.get('shopName')}
@@ -432,7 +431,7 @@ ${item.title}
             method: 'post',
             body: {
               id: this.props.id,
-              sn: store.get('printSN'),
+              sn: store.get('sn'),
               type: 4,
               content: `
 <BR><BR><C><HB>${store.get('shopName')}

@@ -659,7 +659,7 @@ class PayDrawer extends React.Component {
       method: 'post',
       body: {
         id: this.props.id,
-        sn: store.get('printSN'),
+        sn: store.get('sn'),
         type: 4,
         content: `
 <BR><BR><C><HB>${store.get('shopName')}

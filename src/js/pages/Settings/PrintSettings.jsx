@@ -20,8 +20,7 @@ const status = {
   1: '在线正常',
   2: '在线异常 ',
 };
-const printSN = 'printSN';
-const shopName = 'shopName';
+const sn = 'sn';
 
 @Form.create()
 class PrintAction extends React.Component {
@@ -53,7 +52,7 @@ class PrintAction extends React.Component {
                 message.error(status[payload]);
               }
             } else if (type == 1) {
-              store.set(printSN, values.sn);
+              store.set(sn, values.sn);
               message.success(payload);
             } else {
               message.success(payload);
