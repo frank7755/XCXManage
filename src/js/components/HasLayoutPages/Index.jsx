@@ -17,7 +17,6 @@ const shopType = 'shopType';
 const FormItem = Form.Item;
 
 const defaultMenu = menuFunction(store.get(shopType));
-console.log(defaultMenu);
 
 @Form.create()
 class ChangePassword extends React.Component {

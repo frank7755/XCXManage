@@ -118,7 +118,7 @@ class GetImageGroup extends React.Component {
     return (
       <div>
         <Button onClick={this.showModal}>选择商品图</Button>
-        <p style={{ color: '#999', marginTop: 5, marginBottom: 12 }}>最多选择1张图片</p>
+        <p style={{ color: '#999', marginTop: 5, marginBottom: 12 }}>最多选择5张图片</p>
         <div className={styles.imgList}>
           {confirmData.map((item) => (
             <span
@@ -385,7 +385,7 @@ export default class App extends React.Component {
               </p>
             </Col>
             <Col span={10}>
-              <GetImageGroup id={this.props.id} onChange={this.getImageId} maxChecked={15}></GetImageGroup>
+              <GetImageGroup id={this.props.id} onChange={this.getImageId} maxChecked={5}></GetImageGroup>
             </Col>
           </Row>
           <FormItem label="商品分组">

@@ -14,54 +14,49 @@ class VIPAction extends React.Component {
 
   showModal = () => {
     this.setState({
-      visible: true
+      visible: true,
     });
   };
 
-  handleAddOk = e => {
+  handleAddOk = (e) => {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         request('/api/insert_vipuser', {
           method: 'post',
-          body: { ...values, id: this.props.id }
+          body: { ...values, id: this.props.id },
         })
-          .then(success => {
+          .then((success) => {
             this.setState({ visible: false });
             this.props.refresh();
           })
-          .catch(error => message.error(error.message));
+          .catch((error) => message.error(error.message));
       }
     });
   };
 
-  handleEditOk = e => {
+  handleEditOk = (e) => {
     const { data } = this.props;
 
     this.props.form.validateFields((err, values) => {
       if (!err) {
         request('/api/update_vipuser', {
           method: 'post',
-          body: { ...values, id: this.props.id, vip_id: data.vip_id }
+          body: { ...values, id: this.props.id, vip_id: data.vip_id },
         })
-          .then(success => {
+          .then((success) => {
             this.setState({ visible: false });
             this.props.refresh();
           })
-          .catch(error => message.error(error.message));
+          .catch((error) => message.error(error.message));
       }
     });
   };
 
-  handleCancel = e => {
+  handleCancel = (e) => {
     this.setState({
-      visible: false
+      visible: false,
     });
-  };
-
-  onChange = e => {
-    this.setState({
-      value: e.target.value
-    });
+    this.props.form.resetFields();
   };
 
   render() {
@@ -94,7 +89,7 @@ class VIPAction extends React.Component {
               <Form.Item label="会员姓名">
                 {getFieldDecorator('vip_name', {
                   initialValue: data && data.vip_name,
-                  rules: [{ required: true, message: '请输入会员姓名' }]
+                  rules: [{ required: true, message: '请输入会员姓名' }],
                 })(<Input type="text" />)}
               </Form.Item>
             </section>
@@ -106,16 +101,16 @@ class VIPAction extends React.Component {
                     { required: true, message: '请输入手机号' },
                     {
                       pattern: /^1[3456789]\d{9}$/,
-                      message: '请输入正确的手机号'
-                    }
-                  ]
+                      message: '请输入正确的手机号',
+                    },
+                  ],
                 })(<Input maxLength={11} style={{ width: '100%' }} />)}
               </Form.Item>
             </section>
             <section>
               <Form.Item label="等级">
                 {getFieldDecorator('vip_grade', {
-                  initialValue: data ? data.vip_grade : '1'
+                  initialValue: data ? data.vip_grade : '1',
                 })(
                   <Select>
                     <Option value="1">普通会员</Option>
@@ -130,24 +125,24 @@ class VIPAction extends React.Component {
             <section>
               <Form.Item label="生日">
                 {getFieldDecorator('birthday', {
-                  initialValue: data ? moment(data.birthday) : moment().startOf('day')
+                  initialValue: data ? moment(data.birthday) : moment().startOf('day'),
                 })(<DatePicker style={{ width: '100%' }} />)}
               </Form.Item>
             </section>
             <Form.Item label="性别">
               {getFieldDecorator('sex', {
-                initialValue: data ? data.sex : 0
+                initialValue: data ? data.sex : '0',
               })(
-                <Radio.Group onChange={this.onChange}>
-                  <Radio value={0}>未知</Radio>
-                  <Radio value={1}>男</Radio>
-                  <Radio value={2}>女</Radio>
+                <Radio.Group>
+                  <Radio value="0">未知</Radio>
+                  <Radio value="1">男</Radio>
+                  <Radio value="2">女</Radio>
                 </Radio.Group>
               )}
             </Form.Item>
             <Form.Item label="备注">
               {getFieldDecorator('remark', {
-                initialValue: data && data.remarks
+                initialValue: data && data.remarks,
               })(<TextArea type="text" />)}
             </Form.Item>
           </Form>
@@ -163,17 +158,17 @@ class ViperTable extends React.Component {
     {
       title: '会员ID',
       dataIndex: 'vip_id',
-      width: 200
+      width: 200,
     },
     {
       title: '会员姓名',
       dataIndex: 'vip_name',
-      width: 200
+      width: 200,
     },
     {
       title: '联系电话',
       dataIndex: 'vip_tel_no',
-      width: 200
+      width: 200,
     },
     {
       title: '性别',
@@ -181,7 +176,7 @@ class ViperTable extends React.Component {
       width: 200,
       render(sex) {
         return ['未知', '男', '女'][sex];
-      }
+      },
     },
     {
       title: '等级',
@@ -189,7 +184,7 @@ class ViperTable extends React.Component {
       width: 200,
       render(vip_grade) {
         return [, '普通会员', '青铜会员', '黄金会员', '白金会员', '钻石会员'][vip_grade];
-      }
+      },
     },
     {
       title: '生日',
@@ -197,17 +192,17 @@ class ViperTable extends React.Component {
       width: 200,
       render(birthday) {
         return moment(birthday).format('YYYY-MM-DD');
-      }
+      },
     },
     {
       title: '备注',
       dataIndex: 'remark',
-      width: 250
+      width: 250,
     },
     {
       title: '积分',
       dataIndex: 'code',
-      width: 250
+      width: 250,
     },
     {
       title: '操作',
@@ -220,11 +215,11 @@ class ViperTable extends React.Component {
             <VIPAction refresh={this.refresh} id={this.props.id} data={record}></VIPAction>
           </Fragment>
         );
-      }
-    }
+      },
+    },
   ];
 
-  handleChange = e => {
+  handleChange = (e) => {
     const { table } = this.props;
 
     table.search({ id: this.props.id, vip_name: e.target.value }, { ...table.pagination, current: 1 });
@@ -270,14 +265,8 @@ export default class App extends React.Component {
   render() {
     return (
       <div className={styles.vip}>
-        <ViperTable
-          id={this.props.id}
-          source="/api/select_vipuser"
-          prefetch
-          query={{ id: this.props.id }}
-        ></ViperTable>
+        <ViperTable id={this.props.id} source="/api/select_vipuser" prefetch query={{ id: this.props.id }}></ViperTable>
       </div>
     );
   }
 }
-
