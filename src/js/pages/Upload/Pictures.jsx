@@ -100,9 +100,9 @@ class UploadFile extends React.Component {
         if (!isJpgOrPng) {
           message.error('请上传jpg，png或gif格式图片');
         }
-        const isLt2M = file.size / 1024 / 1024 < 1;
+        const isLt2M = file.size / 1024 / 1024 < 3;
         if (!isLt2M) {
-          message.error('图片大小不超过1MB!');
+          message.error('图片大小不超过3MB!');
         }
         this.setState({
           fileList: isJpgOrPng && isLt2M ? [...this.state.fileList, file] : [],

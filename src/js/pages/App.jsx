@@ -1,15 +1,17 @@
 import '~css/reset-pc.less';
 import '~css/antd.less';
 import React, { Fragment } from 'react';
+import loadable from '~js/utils/loadable';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import routes from './route';
 import { history } from '~js/utils/utils.js';
-import HasLayoutPages from '~js/components/HasLayoutPages/Index';
 import { ConfigProvider } from 'antd'; //全局语言包配置
 import zhCN from 'antd/es/locale/zh_CN';
 import './index.css';
 import 'moment/locale/zh-cn';
+
+const HasLayoutPages = loadable(() => import('~js/components/HasLayoutPages/Index.jsx'));
 
 const NoLayoutPages = [];
 const LayoutPages = [];
