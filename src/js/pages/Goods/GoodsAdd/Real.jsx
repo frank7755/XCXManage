@@ -151,8 +151,42 @@ class GetImageGroup extends React.Component {
   }
 }
 
+class CheckedImage extends React.Component {
+  state = { checked: false };
+
+  handleClick = () => {
+    const { onChange, data } = this.props;
+    this.setState(
+      {
+        checked: !this.state.checked,
+      },
+      () => {
+        if (this.state.checked) {
+          onChange && onChange('add', data.image_url);
+        } else {
+          onChange && onChange('minus', data.image_url);
+        }
+      }
+    );
+  };
+
+  render() {
+    const { data } = this.props;
+    const { checked } = this.state;
+
+    return (
+      <div className={styles.imageChoose} key={data.image_id}>
+        <span onClick={this.handleClick} className={checked ? styles.checked : ''}>
+          <img src={data.image_url}></img>
+        </span>
+        <p>{data.name}</p>
+      </div>
+    );
+  }
+}
+
 class RictTextImages extends React.Component {
-  state = { visible: false, imgList: [], checkedNum: null, checkedUrl: '' };
+  state = { visible: false, imgList: [], checkedNum: null, checkedUrl: [] };
 
   showModal = () => {
     this.setState({
@@ -178,11 +212,18 @@ class RictTextImages extends React.Component {
     const { onChange } = this.props;
 
     onChange && onChange(checkedUrl);
-    this.setState({ visible: false, checkedNum: null, checkedUrl: '' });
+
+    this.setState({ visible: false, checkedUrl: [] });
   };
 
-  handleChecked = (id, url) => {
-    this.setState({ checkedUrl: url, checkedNum: id });
+  handleChecked = (action, url) => {
+    const arr = this.state.checkedUrl;
+    if (action == 'add') {
+      arr.push(url);
+      this.setState({ checkedUrl: arr });
+    } else {
+      this.setState({ checkedUrl: arr.filter((item) => (item = !url)) });
+    }
   };
 
   render() {
@@ -193,20 +234,9 @@ class RictTextImages extends React.Component {
         <button type="button" className="control-item button upload-button" data-title="插入图片" onClick={this.showModal}>
           <Icon type="picture" theme="filled" />
         </button>
-        <Modal title="选择图片" width={800} visible={visible} onCancel={this.handleCancel} onOk={this.handleOk}>
+        <Modal title="选择图片" width={800} visible={visible} onCancel={this.handleCancel} onOk={this.handleOk} destroyOnClose>
           {imgList &&
-            imgList.map((item) => (
-              <div className={styles.imageChoose} key={item.image_id}>
-                <span
-                  onClick={() => this.handleChecked(item.image_id, item.image_url)}
-                  data-id={item.image_url}
-                  className={this.state.checkedNum == item.image_id ? styles.checked : ''}
-                >
-                  <img src={item.image_url}></img>
-                </span>
-                <p>{item.name}</p>
-              </div>
-            ))}
+            imgList.map((item) => <CheckedImage key={item.image_id} data={item} onChange={this.handleChecked}></CheckedImage>)}
         </Modal>
       </Fragment>
     );
@@ -289,12 +319,13 @@ export default class App extends React.Component {
 
   handleImageChange = (val) => {
     this.setState({
-      editorState: ContentUtils.insertMedias(this.state.editorState, [
-        {
+      editorState: ContentUtils.insertMedias(
+        this.state.editorState,
+        val.map((item) => ({
           type: 'IMAGE',
-          url: val,
-        },
-      ]),
+          url: item,
+        }))
+      ),
     });
   };
 
